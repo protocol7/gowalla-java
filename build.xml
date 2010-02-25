@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="GowallaJava" default="all">
+    <description>Main build file for the Gowalla Java API Project</description>
+
+    <!-- ================================================================== -->
+	<!--                         Properties                                 -->
+    <!-- ================================================================== -->
+	<property name="build.dir" location="${basedir}/build"/>
+	<property name="build.dir.main" location="${build.dir}/main"/>
+	<property name="build.dir.version" location="${build.dir}/tmp/com/ginsberg/gowalla"/>
+	<property name="dist.dir" location="${basedir}/dist"/>
+	<property name="dist.dir.examples" location="${dist.dir}/examples"/>
+	<property name="dist.dir.javadoc" location="${dist.dir}/api"/>
+	<property name="dist.dir.lib" location="${dist.dir}/lib"/>
+	<property name="dist.dir.src" location="${dist.dir}/src"/>
+	<property name="lib.dir" location="${basedir}/lib"/>
+	<property name="lib.dir.build" location="${lib.dir}/build"/>
+	<property name="lib.dir.dist" location="${lib.dir}/dist"/>
+	<property name="src.dir" location="${basedir}/src"/>
+	<property name="src.dir.examples" location="${src.dir}/examples"/>
+	<property name="src.dir.main" location="${src.dir}/java"/>
+	
+	<property name="compiler.source" value="1.5"/>
+	<property name="compiler.target" value="1.5"/>
+
+	<property name="project.version" value="1.0.0"/>
+	<property name="jar.name" value="gowalla-java-${project.version}.jar"/>
+	<property name="zip.name" value="gowalla-java-${project.version}.zip"/>
+
+	
+    <!-- ================================================================== -->
+	<!--                         Classpaths                                 -->
+    <!-- ================================================================== -->
+	<path id="classpath.dist">
+		<fileset dir="${lib.dir.dist}">
+			<include name="**/*.jar"/>
+		</fileset>
+	</path>
+	
+	<target name="all" depends="clean,dist"/>
+	
+	<target name="clean" 
+	        description="Clean any build artifacts.">
+		<delete dir="${build.dir}"/>
+		<delete dir="${dist.dir}"/>
+	</target>
+	
+	<target name="compile"
+			depends="compile-java,version"
+	        description="Build source to object code."/>
+	
+	<target name="compile-java">
+		<mkdir dir="${build.dir.main}"/>
+		<javac 
+		    srcdir="${src.dir.main}"
+		    destdir="${build.dir.main}"
+		    source="${compiler.source}"
+			target="${compiler.target}"
+		    classpathref="classpath.dist"/>
+	</target>
+	
+	<!-- Dist -->
+	<target name="dist"
+			depends="compile,javadoc"
+	        description="Create the release dist">
+		<mkdir dir="${dist.dir}"/>
+		
+		<!-- Jar built source -->
+		<jar destfile="${dist.dir}/${jar.name}" 
+		     basedir="${build.dir.main}"/>
+		     
+		<!-- Copy source and Version -->
+		<mkdir dir="${dist.dir.src}"/>
+		<copy todir="${dist.dir.src}">
+		    <fileset dir="${src.dir.main}">
+		      <include name="**/*.java"/>
+		    </fileset>
+		</copy>
+		<copy todir="${dist.dir.src}/com/ginsberg/gowalla"
+			  overwrite="true">
+		    <fileset dir="${build.dir.version}">
+		      <include name="**/*.java"/>
+		    </fileset>
+		</copy>
+		
+		<!-- Copy deps -->
+		<mkdir dir="${dist.dir.lib}"/>
+		<copy todir="${dist.dir.lib}">
+		    <fileset dir="${lib.dir.dist}">
+		      <include name="**/*.jar"/>
+		    </fileset>
+		</copy>
+		
+		<!-- Copy examples -->
+		<mkdir dir="${dist.dir.examples}"/>
+		<copy todir="${dist.dir.examples}">
+		    <fileset dir="${src.dir.examples}">
+		      <include name="**/*.java"/>
+		    </fileset>
+		</copy>
+    
+		<!-- Pack it up -->
+		<zip basedir="${dist.dir}"
+		     destfile="${dist.dir}/${zip.name}"/>
+		
+	</target>
+	
+	<!-- Build the JavaDoc for this project -->
+	<target name="javadoc"
+            description="Build javadoc">
+		<mkdir dir="${dist.dir.javadoc}"/>
+		<javadoc 
+			verbose="false"
+			packagenames="com.ginsberg.gowalla.*"
+			sourcepath="${src.dir.main}"
+			destdir="${dist.dir.javadoc}" 
+			classpathref="classpath.dist"
+			public="true"
+            author="true" 
+			version="true" 
+			use="true" 
+			noindex="true"
+            windowtitle="Gowalla Java API"
+            doctitle="Gowalla Java API"
+            bottom="Copyright (c) 2010, Todd Ginsberg.  All rights reserved."/>
+	</target>
+	
+	<!-- Deal with Version of the build -->
+	<target name="version">
+		<mkdir dir="${build.dir.version}"/>
+		<filter token="version" value="${project.version}"/>
+		<copy file="${src.dir.main}/com/ginsberg/gowalla/Version.java"
+		      todir="${build.dir.version}"
+		      filtering="true"/>
+		<javac 
+		    srcdir="${build.dir.version}"
+		    destdir="${build.dir.main}"
+		    source="${compiler.source}"
+			target="${compiler.target}"
+		    classpathref="classpath.dist"/>
+	</target>
+	        
+	
+</project>

@@ -1,0 +1,29 @@
+{
+  "small_image_url": "http://static.gowalla.com/categories/999-small-standard.png",
+  "name": "Parent",
+  "image_url": "http://static.gowalla.com/categories/999-standard.png",
+  "url": "/categories/999",
+  "categories": [],
+  "id": 999,
+  "description": "",
+  "spot_categories": [
+    {
+      "image_url": "http://static.gowalla.com/categories/9991-standard.png",
+      "name": "Subcat 1",
+      "small_image_url": "http://static.gowalla.com/categories/9991-small-standard.png",
+      "url": "/categories/9991",
+      "id": 9991,
+      "categories": [],
+      "description": ""
+    },
+    {
+      "image_url": "http://static.gowalla.com/categories/9992-standard.png",
+      "name": "Subcat 2",
+      "small_image_url": "http://static.gowalla.com/categories/9992-small-standard.png",
+      "url": "/categories/9992",
+      "id": 9992,
+      "categories": [],
+      "description": ""
+    }
+  ]
+}
