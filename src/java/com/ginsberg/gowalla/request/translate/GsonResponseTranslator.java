@@ -49,6 +49,7 @@ import com.ginsberg.gowalla.dto.LocatedSpot;
 import com.ginsberg.gowalla.dto.SimpleSpot;
 import com.ginsberg.gowalla.dto.FullSpot;
 import com.ginsberg.gowalla.dto.SpotEvent;
+import com.ginsberg.gowalla.dto.SpotPhoto;
 import com.ginsberg.gowalla.dto.SpotVisitor;
 import com.ginsberg.gowalla.dto.Stamp;
 import com.ginsberg.gowalla.dto.Trip;
@@ -230,7 +231,13 @@ public class GsonResponseTranslator implements ResponseTranslator {
 		}
 		return events;
 	}
-
+	
+	public List<SpotPhoto> translateSpotPhotos(String response) {
+		final Gson gson = builder.create();
+		final List<SpotPhoto> events = gson.fromJson(response, SpotPhotosContainer.class).activity;
+		return events;
+	}
+	
 	@Override
 	public List<TripSummary> translateTripSummaries(String response) {
 		final Gson gson = builder.create();
@@ -300,6 +307,10 @@ public class GsonResponseTranslator implements ResponseTranslator {
 	 */
 	private static class SpotEventsContainer {
 		List<SpotEvent> activity;
+	}
+	
+	private static class SpotPhotosContainer {
+		List<SpotPhoto> activity;
 	}
 	
 	/**

@@ -46,6 +46,7 @@ import com.ginsberg.gowalla.dto.Locatable;
 import com.ginsberg.gowalla.dto.SimpleSpot;
 import com.ginsberg.gowalla.dto.Spot;
 import com.ginsberg.gowalla.dto.SpotEvent;
+import com.ginsberg.gowalla.dto.SpotPhoto;
 import com.ginsberg.gowalla.dto.Stamp;
 import com.ginsberg.gowalla.dto.Trip;
 import com.ginsberg.gowalla.dto.TripSummary;
@@ -283,7 +284,7 @@ public class Gowalla {
 	}
 	
 	/**
-	 * Get the list of events that happend at a spot.
+	 * Get the list of events that happened at a spot.
 	 * 
 	 * @param identity The id of the spot.
 	 * @return A list of events, or null if no such spot exists.
@@ -291,6 +292,23 @@ public class Gowalla {
 	 */
 	public List<SpotEvent> getSpotEvents(final Id<Spot> identity) throws GowallaException {
 		return getSpotEvents(identity.getId());
+	}
+	
+	/**
+	 * Get the list of photos that happened at a spot.
+	 * 
+	 * @param id The int id of the spot.
+	 * @return A list of photos, or null if no such spot exists.
+	 * @throws GowallaException
+	 */
+	public List<SpotPhoto> getSpotPhotos(final int id) throws GowallaException {
+		try {
+			final String response = request(String.format("/spots/%d/photos", id));
+			return responseTranslator.translateSpotPhotos(response);
+		} catch(RequestNotAcceptableException e) {
+			// No Spot for this number.
+			return null;
+		}	
 	}
 	
 	/**
