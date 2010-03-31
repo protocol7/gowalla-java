@@ -312,6 +312,17 @@ public class Gowalla {
 	}
 	
 	/**
+	 * Get the list of photos that happened at a spot.
+	 * 
+	 * @param identity The id of the spot.
+	 * @return A list of photos, or null if no such spot exists.
+	 * @throws GowallaException
+	 */
+	public List<SpotPhoto> getSpotPhotos(final Id<Spot> identity) throws GowallaException {
+		return getSpotPhotos(identity.getId());
+	}
+	
+	/**
 	 * Get the list of events that happend at a spot.
 	 * 
 	 * @param id The int id of the spot.
