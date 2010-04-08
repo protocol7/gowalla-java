@@ -43,6 +43,7 @@ import com.ginsberg.gowalla.dto.FullSpot;
 import com.ginsberg.gowalla.dto.FullUser;
 import com.ginsberg.gowalla.dto.Id;
 import com.ginsberg.gowalla.dto.Item;
+import com.ginsberg.gowalla.dto.ItemEvent;
 import com.ginsberg.gowalla.dto.Locatable;
 import com.ginsberg.gowalla.dto.SimpleSpot;
 import com.ginsberg.gowalla.dto.Spot;
@@ -404,7 +405,28 @@ public class Gowalla {
 	}
 	
 	/**
+	 * Get the list of events that happened at a spot.
+	 * 
+	 * @param id The int id of the spot.
+	 * @return A list of events, or null if no such spot exists.
+	 * @throws GowallaException
+	 */
+	public List<SpotEvent> getSpotEvents(final int id) throws GowallaException {
+		try {
+			final String response = request(String.format("/spots/%d/events", id));
+			return responseTranslator.translateSpotEvents(response);
+		} catch(RequestNotAcceptableException e) {
+			// No Spot for this number.
+			return null;
+		}	
+	}
+	
+	/**
 	 * Get the list of photos that happened at a spot.
+	 * 
+	 * WARNING: This method uses calls not officially supported by Gowalla.  This 
+	 * means it may go away without warning while you are using it.  It also means
+	 * we may have to drop support for it.
 	 * 
 	 * @param id The int id of the spot.
 	 * @return A list of photos, or null if no such spot exists.
@@ -423,6 +445,10 @@ public class Gowalla {
 	/**
 	 * Get the list of photos that happened at a spot.
 	 * 
+	 * WARNING: This method uses calls not officially supported by Gowalla.  This 
+	 * means it may go away without warning while you are using it.  It also means
+	 * we may have to drop support for it.
+	 * 
 	 * @param identity The id of the spot.
 	 * @return A list of photos, or null if no such spot exists.
 	 * @throws GowallaException
@@ -432,20 +458,39 @@ public class Gowalla {
 	}
 	
 	/**
-	 * Get the list of events that happend at a spot.
+	 * Get the list of events that happened to an item.
 	 * 
-	 * @param id The int id of the spot.
+	 * WARNING: This method uses calls not officially supported by Gowalla.  This 
+	 * means it may go away without warning while you are using it.  It also means
+	 * we may have to drop support for it.
+	 *  
+	 * @param id The int id of the item.
 	 * @return A list of events, or null if no such spot exists.
 	 * @throws GowallaException
 	 */
-	public List<SpotEvent> getSpotEvents(final int id) throws GowallaException {
+	public List<ItemEvent> getItemEvents(final int id) throws GowallaException {
 		try {
-			final String response = request(String.format("/spots/%d/events", id));
-			return responseTranslator.translateSpotEvents(response);
+			final String response = request(String.format("/items/%d/events", id));
+			return responseTranslator.translateItemEvents(response);
 		} catch(RequestNotAcceptableException e) {
 			// No Spot for this number.
 			return null;
 		}	
+	}
+	
+	/**
+	 * Get the list of events that happened to an item.
+	 * 
+	 * WARNING: This method uses calls not officially supported by Gowalla.  This 
+	 * means it may go away without warning while you are using it.  It also means
+	 * we may have to drop support for it.
+	 * 
+	 * @param identity The id of the item.
+	 * @return A list of events, or null if no such spot exists.
+	 * @throws GowallaException
+	 */
+	public List<ItemEvent> getItemEvents(final Id<Item> identity) throws GowallaException {
+		return getItemEvents(identity.getId());
 	}
 	
 	/**

@@ -40,6 +40,7 @@ import java.util.List;
 
 import com.ginsberg.gowalla.dto.Address;
 import com.ginsberg.gowalla.dto.Category;
+import com.ginsberg.gowalla.dto.ItemEvent;
 import com.ginsberg.gowalla.dto.User;
 import com.ginsberg.gowalla.dto.FullCategory;
 import com.ginsberg.gowalla.dto.Id;
@@ -90,6 +91,9 @@ public class GsonResponseTranslator implements ResponseTranslator {
 			// Damn you to heck, SimpleDateFormat. 
 			public Date deserialize(JsonElement arg0, Type arg1, JsonDeserializationContext arg2) throws JsonParseException {
 				String date = arg0.getAsString();
+				date = date.replaceAll("/", "-");
+				date = date.replaceFirst("\\s", "T");
+				date = date.replaceAll(" ", "");
 				date = date.replaceAll("\\+", "GMT\\+");
 				SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 				try {
@@ -232,6 +236,12 @@ public class GsonResponseTranslator implements ResponseTranslator {
 		return events;
 	}
 	
+	public List<ItemEvent> translateItemEvents(String response) {
+		final Gson gson = builder.create();
+		final List<ItemEvent> events = gson.fromJson(response, ItemEventsContainer.class).events;
+		return events;
+	}
+	
 	public List<SpotPhoto> translateSpotPhotos(String response) {
 		final Gson gson = builder.create();
 		final List<SpotPhoto> events = gson.fromJson(response, SpotPhotosContainer.class).activity;
@@ -309,8 +319,18 @@ public class GsonResponseTranslator implements ResponseTranslator {
 		List<SpotEvent> activity;
 	}
 	
+	/**
+	 * I only want the insides of this part.
+	 */
 	private static class SpotPhotosContainer {
 		List<SpotPhoto> activity;
+	}
+	
+	/**
+	 * I only want the insides of this part.
+	 */
+	private static class ItemEventsContainer {
+		List<ItemEvent> events;
 	}
 	
 	/**
