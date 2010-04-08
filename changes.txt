@@ -1,0 +1,9 @@
+Changes from 1.0.0 to 1.1.0
+---------------------------
+o [Feature] New methods to support finding large sets of spots.
+  - Paging support
+  - Limits higher than default 40 spots.
+o [Feature] List items in user's pack.
+o [Feature] List items in user's vault.
+o [Feature] List items a user is (officially) missing.
+
