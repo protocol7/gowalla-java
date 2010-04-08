@@ -31,6 +31,7 @@ package com.ginsberg.gowalla;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -156,7 +157,60 @@ public class Gowalla {
 	 * list will be returned.  The spots will be returned in order of nearest to farthest from
 	 * the spot given.
 	 * 
-	 * Functional note: Gowalla seems to truncate the results to 40 spots.
+	 * Functional note: Gowalla doesn't return full spot information with this call, so 
+	 * SimpleSpot objects are returned instead, so as not to mislead the caller into
+	 * thinking some data isn't available.
+	 * 
+	 * WARNING: This method uses calls not officially supported by Gowalla.  This 
+	 * means it may go away without warning while you are using it.  It also means
+	 * we may have to drop support for it.
+	 * 	 * 
+	 * @param location An object expressing the point to search from.
+	 * @param radiusMeters How far away from the spot to search.  If negative, the absolute value is taken.
+	 * @param numberOfSpots How many spots to return, if available.  If negative, the absolute value is taken.
+	 * @param paging Determine the paging strategy that should be used to complete the request.
+	 * @return A List of SimpleSpots.
+	 * @throws GowallaException
+	 */
+	public List<SimpleSpot> findSpotsNear(final Locatable location, final int radiusMeters, final int numberOfSpots, final PagingSupport paging) throws GowallaException  {
+		List<SimpleSpot> spotsReturned = new LinkedList<SimpleSpot>(); 
+		final int spotsToReturn = Math.abs(numberOfSpots);
+		
+		int spotsLastRequest = 0;
+		boolean keepGoing = true;
+		while(keepGoing) {
+			final String response = request(String.format("/spots?lat=%f&lng=%f&radius=%d&limit=%d&offset=%d", 
+					location.getGeoLocation().getLatitude(),
+					location.getGeoLocation().getLongitude(),
+					Math.abs(radiusMeters),
+					Math.abs(spotsToReturn),
+					spotsReturned.size()));
+			spotsReturned.addAll(responseTranslator.translateSimpleSpots(response));
+			
+			// Don't keep paging if we don't support it, are over the limit, or didn't receive anything.
+			if(paging == PagingSupport.SINGLE_REQUEST_ONLY ||
+			   spotsReturned.size() >= Math.abs(spotsToReturn)  ||
+		       spotsReturned.size() == spotsLastRequest) {
+				keepGoing = false;
+			} else {
+				spotsLastRequest = spotsReturned.size();
+			}
+		}
+		Collections.sort(spotsReturned, new DistanceComparator(location.getGeoLocation()));
+		if(spotsReturned.size() > spotsToReturn) {
+			// Do it this way because subList is still backed by the larger list.
+			spotsReturned = new LinkedList<SimpleSpot>(spotsReturned.subList(0, spotsToReturn));
+		}
+		return spotsReturned;
+	}
+	
+	/**
+	 * Find spots within the radius given.  If no spots exist within the radius given, an empty
+	 * list will be returned.  The spots will be returned in order of nearest to farthest from
+	 * the spot given.
+	 * 
+	 * Functional note: Gowalla seems to truncate the results to 40 spots so this method
+	 * requests that many by default.
 	 * 
 	 * Functional note: Gowalla doesn't return full spot information with this call, so 
 	 * SimpleSpot objects are returned instead, so as not to mislead the caller into
@@ -168,13 +222,7 @@ public class Gowalla {
 	 * @throws GowallaException
 	 */
 	public List<SimpleSpot> findSpotsNear(final Locatable location, final int radiusMeters) throws GowallaException  {
-		final String response = request(String.format("/spots?lat=%f&lng=%f&radius=%d", 
-				location.getGeoLocation().getLatitude(),
-				location.getGeoLocation().getLongitude(),
-				Math.abs(radiusMeters)));
-		final List<SimpleSpot> spots = responseTranslator.translateSimpleSpots(response);
-		Collections.sort(spots, new DistanceComparator(location.getGeoLocation()));
-		return spots;
+		return findSpotsNear(location, radiusMeters, 40, PagingSupport.SINGLE_REQUEST_ONLY);
 	}
 	
 	/**
@@ -234,6 +282,67 @@ public class Gowalla {
 	 */
 	public FullSpot getSpot(final Id<Spot> identity) throws GowallaException {
 		return getSpot(identity.getId());
+	}
+	
+	/**
+	 * Get items the user is carrying, missing, or has in their vault.
+	 * 
+	 * WARNING: This method uses calls not officially supported by Gowalla.  This 
+	 * means it may go away without warning while you are using it.  It also means
+	 * we may have to drop support for it.
+	 * 
+	 * @param identity The user identity.
+	 * @param context Which type of items are being requested.
+	 * @throws GowallaException
+	 */
+	public List<Item> getItemsForUser(final Id<User> identity, final ItemContext context) throws GowallaException {
+		return getItemsForUser(identity.getId(), context);
+	}
+	
+	/**
+	 * Get items the user is carrying, missing, or has in their vault.
+	 * 
+	 * WARNING: This method uses calls not officially supported by Gowalla.  This 
+	 * means it may go away without warning while you are using it.  It also means
+	 * we may have to drop support for it.
+	 * 
+	 * @param id The user number.
+	 * @param context Which type of items are being requested.
+	 * @throws GowallaException
+	 */
+	public List<Item> getItemsForUser(final int id, final ItemContext context) throws GowallaException {
+		try {
+			final String response = request(String.format("/users/%d/items?context=%s", 
+					id,
+					context.name().toLowerCase()));
+			return responseTranslator.translateItems(response);
+		} catch(RequestNotAcceptableException e) {
+			// No User for this number.
+			return null;
+		}
+	}
+	
+	/**
+	 * Get items the user is carrying, missing, or has in their vault.
+	 * 
+	 * WARNING: This method uses calls not officially supported by Gowalla.  This 
+	 * means it may go away without warning while you are using it.  It also means
+	 * we may have to drop support for it.
+	 * 
+	 * @param username The username of the user you are requesting items for.
+	 * @param context Which type of items are being requested.
+	 * @throws GowallaException
+	 */
+	public List<Item> getItemsForUser(final String username, final ItemContext context) throws GowallaException {
+		try {
+			final String response = request(String.format("/users/%s/items?context=%s", 
+					username,
+					context.name().toLowerCase()));
+			return responseTranslator.translateItems(response);
+		} catch(RequestNotAcceptableException e) {
+			// No User for this number.
+			return null;
+		}
 	}
 	
 	
