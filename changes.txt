@@ -6,4 +6,7 @@ o [Feature] New methods to support finding large sets of spots.
 o [Feature] List items in user's pack.
 o [Feature] List items in user's vault.
 o [Feature] List items a user is (officially) missing.
-
+o [Feature] List photos posted to a spot
+  - Returns 6 different URLs corellating to different sized images. 
+o [Feature] List item events.
+o [Enhancement] Additional date parsing and formatting.
