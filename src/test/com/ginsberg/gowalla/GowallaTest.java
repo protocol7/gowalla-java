@@ -169,4 +169,32 @@ public class GowallaTest {
 		assertEquals("/spots/11888", s.getUrl());
 		assertNotNull(s.getImageUrl());
 	}
+	
+	@Test 
+	public void testFindSpotsWithPaging() throws Exception {
+		GeoPoint where = new GeoPoint("30.2590405833", "-97.75244235");
+		List<SimpleSpot> spots = gowalla.findSpotsNear(where, 1000, 250, PagingSupport.PAGING_ALLOWED);
+		assertNotNull(spots);
+		assertEquals("Should have returned 250 spots near Sno-Beach.", 250, spots.size());
+	}
+	
+	@Test
+	public void testItemsInPack() throws Exception {
+		List<Item> items = gowalla.getItemsForUser("santa", ItemContext.PACK);
+		assertEquals("Santa shouldn't have less than 10 things.", 10, items.size());
+	}
+		
+	@Test
+	public void testItemsInVault() throws Exception {
+		List<Item> items = gowalla.getItemsForUser("santa", ItemContext.VAULT);
+		assertEquals("Santa account should have an empty vault.", 0, items.size());
+		items = gowalla.getItemsForUser("tginsberg", ItemContext.VAULT);
+		assertTrue("Todd should have an non-empty vault.",items.size() > 140);
+	}
+	
+	@Test
+	public void testItemsMissing() throws Exception {
+		List<Item> items = gowalla.getItemsForUser("santa", ItemContext.MISSING);
+		assertTrue("Santa account should have some missing items.", items.size() != 0);
+	}
 }
