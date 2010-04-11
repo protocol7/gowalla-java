@@ -346,6 +346,45 @@ public class Gowalla {
 		}
 	}
 	
+	/**
+	 * Get a user's friends.
+	 * 
+	 * WARNING: This method uses calls not officially supported by Gowalla.  This 
+	 * means it may go away without warning while you are using it.  It also means
+	 * we may have to drop support for it.
+	 * 
+	 * @param id The user number.
+	 * @throws GowallaException
+	 */
+	public List<User> getUserFriends(final int id) throws GowallaException {
+		try {
+			final String response = request(String.format("/users/%d/friends",id));
+			return responseTranslator.translateUsers(response);
+		} catch(RequestNotAcceptableException e) {
+			// No User for this number.
+			return null;
+		}
+	}
+	
+	/**
+	 * Get a user's friends.
+	 * 
+	 * WARNING: This method uses calls not officially supported by Gowalla.  This 
+	 * means it may go away without warning while you are using it.  It also means
+	 * we may have to drop support for it.
+	 * 
+	 * @param id The user number.
+	 * @throws GowallaException
+	 */
+	public List<User> getUserFriends(final String username) throws GowallaException {
+		try {
+			final String response = request(String.format("/users/%s/friends",username));
+			return responseTranslator.translateUsers(response);
+		} catch(RequestNotAcceptableException e) {
+			// No User for this name.
+			return null;
+		}
+	}
 	
 	/**
 	 * Get all of the items at a spot.  

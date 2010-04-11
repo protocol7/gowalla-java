@@ -215,6 +215,15 @@ public class GsonResponseTranslator implements ResponseTranslator {
 		}
 		return user;
 	}
+	
+	public List<User> translateUsers(final String response) {
+		final Gson gson = builder.create();
+		final List<User> users = gson.fromJson(response, UsersContainer.class).users;
+		for(User user : users) {
+			fixId(user);
+		}
+		return users;
+	}
 
 	@Override
 	public List<VisitedSpot> translateVisitedSpots(final String response) {
@@ -303,6 +312,13 @@ public class GsonResponseTranslator implements ResponseTranslator {
 	 */
 	private static class ItemsContainer {
 		List<Item> items;
+	}
+	
+	/**
+	 * I only want the insides of this part.
+	 */
+	private static class UsersContainer {
+		List<User> users;
 	}
 	
 	/**

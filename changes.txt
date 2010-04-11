@@ -10,3 +10,4 @@ o [Feature] List photos posted to a spot
   - Returns 6 different URLs corellating to different sized images. 
 o [Feature] List item events.
 o [Enhancement] Additional date parsing and formatting.
+o [Feature] List friends of user.

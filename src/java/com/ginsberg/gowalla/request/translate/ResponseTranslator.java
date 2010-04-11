@@ -42,6 +42,7 @@ import com.ginsberg.gowalla.dto.Stamp;
 import com.ginsberg.gowalla.dto.Trip;
 import com.ginsberg.gowalla.dto.TripSummary;
 import com.ginsberg.gowalla.dto.FullUser;
+import com.ginsberg.gowalla.dto.User;
 import com.ginsberg.gowalla.dto.VisitedSpot;
 import com.ginsberg.gowalla.exception.GowallaResponseException;
 
@@ -86,4 +87,6 @@ public interface ResponseTranslator {
 	public List<SpotPhoto> translateSpotPhotos(final String response);
 	
 	public List<ItemEvent> translateItemEvents(final String response);
+	
+	public List<User> translateUsers(final String response);
 }
