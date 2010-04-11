@@ -373,7 +373,7 @@ public class Gowalla {
 	 * means it may go away without warning while you are using it.  It also means
 	 * we may have to drop support for it.
 	 * 
-	 * @param id The user number.
+	 * @param username The username of the user you are requesting friends of.
 	 * @throws GowallaException
 	 */
 	public List<User> getUserFriends(final String username) throws GowallaException {
@@ -386,6 +386,46 @@ public class Gowalla {
 		}
 	}
 	
+	/**
+	 * Get a user's created trips
+	 * 
+	 * WARNING: This method uses calls not officially supported by Gowalla.  This 
+	 * means it may go away without warning while you are using it.  It also means
+	 * we may have to drop support for it.
+	 * 
+	 * @param id The user number.
+	 * @throws GowallaException
+	 */
+	public List<TripSummary> getUserCreatedTrips(final int id) throws GowallaException {
+		try {
+			final String response = request(String.format("/users/%d/trips",id));
+			return responseTranslator.translateUserCreatedTrips(response);
+		} catch(RequestNotAcceptableException e) {
+			// No User for this number.
+			return null;
+		}
+	}
+	
+	/**
+	 * Get a user's created trips
+	 * 
+	 * WARNING: This method uses calls not officially supported by Gowalla.  This 
+	 * means it may go away without warning while you are using it.  It also means
+	 * we may have to drop support for it.
+	 * 
+	 * @param username The username of the user you are requesting trips created by.
+	 * @throws GowallaException
+	 */
+	public List<TripSummary> getUserCreatedTrips(final String username) throws GowallaException {
+		try {
+			final String response = request(String.format("/users/%s/trips",username));
+			return responseTranslator.translateUserCreatedTrips(response);
+		} catch(RequestNotAcceptableException e) {
+			// No User for this name.
+			return null;
+		}
+	}
+		
 	/**
 	 * Get all of the items at a spot.  
 	 * 

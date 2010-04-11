@@ -73,6 +73,8 @@ public interface ResponseTranslator {
 	public List<SimpleSpot> translateSimpleSpots(final String response);
 
 	public Trip translateTrip(final String response);
+	
+	public List<TripSummary> translateUserCreatedTrips(final String response);
 
 	public FullUser translateUser(final String response);
 

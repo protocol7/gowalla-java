@@ -11,3 +11,4 @@ o [Feature] List photos posted to a spot
 o [Feature] List item events.
 o [Enhancement] Additional date parsing and formatting.
 o [Feature] List friends of user.
+o [Feature] List trips created by a user.

@@ -204,6 +204,15 @@ public class GsonResponseTranslator implements ResponseTranslator {
 		}
 		return trip;
 	}
+	
+	public List<TripSummary> translateUserCreatedTrips(final String response) {
+		final Gson gson = builder.create();
+		final List<TripSummary> trips = gson.fromJson(response, TripSummaryContainer.class).trips;
+		for(TripSummary trip : trips) {
+			fixId(trip);
+		}
+		return trips;
+	}
 
 	@Override
 	public FullUser translateUser(final String response) {
