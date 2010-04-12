@@ -258,9 +258,7 @@ public class GsonResponseTranslator implements ResponseTranslator {
 		final Gson gson = builder.create();
 		final List<ItemEvent> events = gson.fromJson(response, ItemEventsContainer.class).events;
 		 for(ItemEvent e : events) {
-			 if (e.getSpot() != null) {
-			   fixId(e.getSpot());
-			 }
+			 fixId(e.getSpot());
 			 fixId(e.getUser());
 		 }
 		return events;
@@ -269,6 +267,9 @@ public class GsonResponseTranslator implements ResponseTranslator {
 	public List<SpotPhoto> translateSpotPhotos(String response) {
 		final Gson gson = builder.create();
 		final List<SpotPhoto> events = gson.fromJson(response, SpotPhotosContainer.class).activity;
+		for(SpotPhoto photo : events) {
+			fixId(photo.getUser());
+		}
 		return events;
 	}
 	
@@ -311,7 +312,9 @@ public class GsonResponseTranslator implements ResponseTranslator {
 	 * For ID objects, fix the ids by picking them off the end of the url.
 	 */
 	private <T> void fixId(Id<T> object) {
-		object.setId(toId(object.getUrl()));
+		if(object != null) {
+			object.setId(toId(object.getUrl()));
+		}
 	}
 	
 	/**
