@@ -257,6 +257,12 @@ public class GsonResponseTranslator implements ResponseTranslator {
 	public List<ItemEvent> translateItemEvents(String response) {
 		final Gson gson = builder.create();
 		final List<ItemEvent> events = gson.fromJson(response, ItemEventsContainer.class).events;
+		 for(ItemEvent e : events) {
+			 if (e.getSpot() != null) {
+			   fixId(e.getSpot());
+			 }
+			 fixId(e.getUser());
+		 }
 		return events;
 	}
 	
