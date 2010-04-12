@@ -92,6 +92,14 @@ public class User implements Serializable, Id<User>{
 	public String getName() {
 		return String.format("%s %s", first_name, last_name).trim();
 	}
+	
+	public String getImageUrl() {
+		return image_url;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.image_url = imageUrl;
+	}
 
 	@Override
 	public int hashCode() {
