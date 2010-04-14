@@ -31,11 +31,8 @@ package com.ginsberg.gowalla.dto;
 
 /**
  * Representation of an event happening to or with an Item.  
- * 
- * TODO: Determine if this is public or private.
- * 
+ *   
  * @author Todd Ginsberg
- *
  */
 public class ItemEvent extends Event {
 
