@@ -35,11 +35,11 @@ import java.util.Map;
 import com.ginsberg.gowalla.util.PhotoParser;
 
 /**
- * DTO representing photo events that happens to/at a Spot.
+ * DTO representing an photos posted by a user.
  *  
- * @author Ryan Crutchfield
+ * @author Ryan Crutchfield - rc6750@gmail.com
  */
-public class SpotPhoto extends SpotEvent {
+public class UserPhoto extends UserEvent {
 
 	private static final long serialVersionUID = 2780217905102991779L;
 	private Map<String,String> photo_urls;
@@ -58,6 +58,6 @@ public class SpotPhoto extends SpotEvent {
 	
 	@Override
 	public String toString() {
-		return String.format("SpotPhoto[photo_urls=%s]", getPhotos());
+		return String.format("UserPhoto[photo_urls=%s]", getPhotos());
 	}
 }

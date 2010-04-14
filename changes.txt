@@ -14,3 +14,4 @@ o [Feature] List friends of user.
 o [Feature] List trips created by a user.
 o [BugFix] Add Image Url getter/setter to User object (found by Richard Dean - thanks!)
 o [Enhancement] Create GSON object once, don't recreate from builder every time.
+o [Feature] List photos posted by a user.

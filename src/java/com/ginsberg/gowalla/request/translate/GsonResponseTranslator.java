@@ -55,6 +55,7 @@ import com.ginsberg.gowalla.dto.Trip;
 import com.ginsberg.gowalla.dto.TripSummary;
 import com.ginsberg.gowalla.dto.User;
 import com.ginsberg.gowalla.dto.UserEvent;
+import com.ginsberg.gowalla.dto.UserPhoto;
 import com.ginsberg.gowalla.dto.VisitedSpot;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -241,6 +242,7 @@ public class GsonResponseTranslator implements ResponseTranslator {
 		return events;
 	}
 	
+	@Override
 	public List<ItemEvent> translateItemEvents(String response) {
 		final List<ItemEvent> events = gson.fromJson(response, ItemEventsContainer.class).events;
 		 for(ItemEvent e : events) {
@@ -250,10 +252,20 @@ public class GsonResponseTranslator implements ResponseTranslator {
 		return events;
 	}
 	
+	@Override
 	public List<SpotPhoto> translateSpotPhotos(String response) {
 		final List<SpotPhoto> events = gson.fromJson(response, SpotPhotosContainer.class).activity;
 		for(SpotPhoto photo : events) {
 			fixId(photo.getUser());
+		}
+		return events;
+	}
+	
+	@Override
+	public List<UserPhoto> translateUserPhotos(String response) {
+		final List<UserPhoto> events = gson.fromJson(response, UserPhotosContainer.class).activity;
+		for(UserPhoto photo : events) {
+			fixId(photo.getSpot());
 		}
 		return events;
 	}
@@ -341,6 +353,13 @@ public class GsonResponseTranslator implements ResponseTranslator {
 	 */
 	private static class SpotPhotosContainer {
 		List<SpotPhoto> activity;
+	}
+	
+	/**
+	 * I only want the insides of this part.
+	 */
+	private static class UserPhotosContainer {
+		List<UserPhoto> activity;
 	}
 	
 	/**

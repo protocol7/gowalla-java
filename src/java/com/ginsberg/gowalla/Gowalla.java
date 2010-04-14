@@ -53,6 +53,7 @@ import com.ginsberg.gowalla.dto.Stamp;
 import com.ginsberg.gowalla.dto.Trip;
 import com.ginsberg.gowalla.dto.TripSummary;
 import com.ginsberg.gowalla.dto.User;
+import com.ginsberg.gowalla.dto.UserPhoto;
 import com.ginsberg.gowalla.dto.VisitedSpot;
 import com.ginsberg.gowalla.dto.compare.DistanceComparator;
 import com.ginsberg.gowalla.exception.GowallaException;
@@ -424,6 +425,42 @@ public class Gowalla {
 			// No User for this name.
 			return null;
 		}
+	}
+	
+	/**
+	 * Get the list of photos that a user has posted.
+	 * 
+	 * WARNING: This method uses calls not officially supported by Gowalla.  This 
+	 * means it may go away without warning while you are using it.  It also means
+	 * we may have to drop support for it.
+	 * 
+	 * @param id The int id of the user.
+	 * @return A list of photos, or null if no such user exists.
+	 * @throws GowallaException
+	 */
+	public List<UserPhoto> getUserPhotos(final int id) throws GowallaException {
+		try {
+			final String response = request(String.format("/users/%d/photos", id));
+			return responseTranslator.translateUserPhotos(response);
+		} catch(RequestNotAcceptableException e) {
+			// No Spot for this number.
+			return null;
+		}	
+	}
+	
+	/**
+	 * Get the list of photos that a user has posted.
+	 * 
+	 * WARNING: This method uses calls not officially supported by Gowalla.  This 
+	 * means it may go away without warning while you are using it.  It also means
+	 * we may have to drop support for it.
+	 * 
+	 * @param identity The id of the user.
+	 * @return A list of photos, or null if no such user exists.
+	 * @throws GowallaException
+	 */
+	public List<UserPhoto> getUserPhotos(final Id<User> identity) throws GowallaException {
+		return getUserPhotos(identity.getId());
 	}
 		
 	/**
