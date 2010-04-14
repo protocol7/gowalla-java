@@ -29,8 +29,6 @@
  */
 package com.ginsberg.gowalla.request.translate;
 
-import static com.ginsberg.gowalla.util.Strings.toId;
-
 import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -40,22 +38,22 @@ import java.util.List;
 
 import com.ginsberg.gowalla.dto.Address;
 import com.ginsberg.gowalla.dto.Category;
-import com.ginsberg.gowalla.dto.ItemEvent;
-import com.ginsberg.gowalla.dto.User;
 import com.ginsberg.gowalla.dto.FullCategory;
+import com.ginsberg.gowalla.dto.FullSpot;
+import com.ginsberg.gowalla.dto.FullUser;
 import com.ginsberg.gowalla.dto.Id;
 import com.ginsberg.gowalla.dto.Identity;
 import com.ginsberg.gowalla.dto.Item;
+import com.ginsberg.gowalla.dto.ItemEvent;
 import com.ginsberg.gowalla.dto.LocatedSpot;
 import com.ginsberg.gowalla.dto.SimpleSpot;
-import com.ginsberg.gowalla.dto.FullSpot;
 import com.ginsberg.gowalla.dto.SpotEvent;
 import com.ginsberg.gowalla.dto.SpotPhoto;
 import com.ginsberg.gowalla.dto.SpotVisitor;
 import com.ginsberg.gowalla.dto.Stamp;
 import com.ginsberg.gowalla.dto.Trip;
 import com.ginsberg.gowalla.dto.TripSummary;
-import com.ginsberg.gowalla.dto.FullUser;
+import com.ginsberg.gowalla.dto.User;
 import com.ginsberg.gowalla.dto.UserEvent;
 import com.ginsberg.gowalla.dto.VisitedSpot;
 import com.google.gson.Gson;
@@ -64,6 +62,8 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
+
+import static com.ginsberg.gowalla.util.Strings.toId;
 
 /**
  * Translates API Responses using the GSON library.  This library was 
@@ -80,14 +80,14 @@ import com.google.gson.JsonParseException;
  */
 public class GsonResponseTranslator implements ResponseTranslator {
 
-	private GsonBuilder builder = new GsonBuilder();
+	private Gson gson = null;
 	
 	/**
 	 * Construct an instance.  This implementation sets the GsonBuilder.
 	 */
 	public GsonResponseTranslator() {
 		super();
-		builder.registerTypeAdapter(Date.class, new JsonDeserializer<Date>() {
+		gson = new GsonBuilder().registerTypeAdapter(Date.class, new JsonDeserializer<Date>() {
 			// Damn you to heck, SimpleDateFormat. 
 			public Date deserialize(JsonElement arg0, Type arg1, JsonDeserializationContext arg2) throws JsonParseException {
 				String date = arg0.getAsString();
@@ -103,8 +103,7 @@ public class GsonResponseTranslator implements ResponseTranslator {
 				}
 			}
 			
-		});
-		
+		}).create();
 	}
 	
 
@@ -113,7 +112,6 @@ public class GsonResponseTranslator implements ResponseTranslator {
 	 */
 	@Override
 	public List<FullCategory> translateCategories(final String response) {
-		final Gson gson = builder.create();
 		final FullCategory topCategory = gson.fromJson(response, FullCategory.class);
 		final List<FullCategory> categories = topCategory.getSubcategories();
 		
@@ -135,7 +133,6 @@ public class GsonResponseTranslator implements ResponseTranslator {
 	 */
 	@Override
 	public FullCategory translateCategory(final String response)  {
-		final Gson gson = builder.create();
 		final FullCategory category = gson.fromJson(response, FullCategory.class);
 		fixId(category);
 		return category;
@@ -146,7 +143,6 @@ public class GsonResponseTranslator implements ResponseTranslator {
 	 */
 	@Override
 	public FullSpot translateSpot(final String response, final int id) {
-		final Gson gson = builder.create();
 		final FullSpot spot = gson.fromJson(response, FullSpot.class);
 		
 		// The things I do for you...
@@ -167,7 +163,6 @@ public class GsonResponseTranslator implements ResponseTranslator {
 
 	@Override
 	public List<Item> translateItems(final String response) {
-		final Gson gson = builder.create();
 		final List<Item> items = gson.fromJson(response, ItemsContainer.class).items;
 		for(Item item : items) {
 			fixId(item);
@@ -177,7 +172,6 @@ public class GsonResponseTranslator implements ResponseTranslator {
 
 	@Override
 	public Item translateItem(final String response) {
-		final Gson gson = builder.create();
 		final Item item = gson.fromJson(response, Item.class);
 		fixId(item);
 		return item;
@@ -185,7 +179,6 @@ public class GsonResponseTranslator implements ResponseTranslator {
 
 	@Override
 	public List<SimpleSpot> translateSimpleSpots(String response) {
-		final Gson gson = builder.create();
 		final List<SimpleSpot> spots = gson.fromJson(response, SimpleSpotsContainer.class).spots;
 		for(SimpleSpot spot : spots) {
 			fixId(spot);
@@ -195,7 +188,6 @@ public class GsonResponseTranslator implements ResponseTranslator {
 	
 	@Override
 	public Trip translateTrip(final String response) {
-		final Gson gson = builder.create();
 		final Trip trip = gson.fromJson(response, Trip.class);
 		fixId(trip);
 		fixId(trip.getCreator());
@@ -206,7 +198,6 @@ public class GsonResponseTranslator implements ResponseTranslator {
 	}
 	
 	public List<TripSummary> translateUserCreatedTrips(final String response) {
-		final Gson gson = builder.create();
 		final List<TripSummary> trips = gson.fromJson(response, TripSummaryContainer.class).trips;
 		for(TripSummary trip : trips) {
 			fixId(trip);
@@ -216,7 +207,6 @@ public class GsonResponseTranslator implements ResponseTranslator {
 
 	@Override
 	public FullUser translateUser(final String response) {
-		final Gson gson = builder.create();
 		final FullUser user = gson.fromJson(response, FullUser.class);
 		fixId(user);
 		for(UserEvent e : user.getLastCheckins()) {
@@ -226,7 +216,6 @@ public class GsonResponseTranslator implements ResponseTranslator {
 	}
 	
 	public List<User> translateUsers(final String response) {
-		final Gson gson = builder.create();
 		final List<User> users = gson.fromJson(response, UsersContainer.class).users;
 		for(User user : users) {
 			fixId(user);
@@ -236,7 +225,6 @@ public class GsonResponseTranslator implements ResponseTranslator {
 
 	@Override
 	public List<VisitedSpot> translateVisitedSpots(final String response) {
-		final Gson gson = builder.create();
 		final List<VisitedSpot> spots = gson.fromJson(response, VisitedSpotsContainer.class).top_spots;
 		for(VisitedSpot s : spots) {
 			fixId(s);
@@ -246,7 +234,6 @@ public class GsonResponseTranslator implements ResponseTranslator {
 
 	@Override
 	public List<SpotEvent> translateSpotEvents(String response) {
-		final Gson gson = builder.create();
 		final List<SpotEvent> events = gson.fromJson(response, SpotEventsContainer.class).activity;
 		for(SpotEvent e : events) {
 			fixId(e.getUser());
@@ -255,7 +242,6 @@ public class GsonResponseTranslator implements ResponseTranslator {
 	}
 	
 	public List<ItemEvent> translateItemEvents(String response) {
-		final Gson gson = builder.create();
 		final List<ItemEvent> events = gson.fromJson(response, ItemEventsContainer.class).events;
 		 for(ItemEvent e : events) {
 			 fixId(e.getSpot());
@@ -265,7 +251,6 @@ public class GsonResponseTranslator implements ResponseTranslator {
 	}
 	
 	public List<SpotPhoto> translateSpotPhotos(String response) {
-		final Gson gson = builder.create();
 		final List<SpotPhoto> events = gson.fromJson(response, SpotPhotosContainer.class).activity;
 		for(SpotPhoto photo : events) {
 			fixId(photo.getUser());
@@ -275,7 +260,6 @@ public class GsonResponseTranslator implements ResponseTranslator {
 	
 	@Override
 	public List<TripSummary> translateTripSummaries(String response) {
-		final Gson gson = builder.create();
 		final List<TripSummary> trips = gson.fromJson(response, TripSummaryContainer.class).trips;
 		for(TripSummary t : trips) {
 			fixId(t);
@@ -288,7 +272,6 @@ public class GsonResponseTranslator implements ResponseTranslator {
 
 	@Override
 	public List<Stamp> translateStamps(String response) {
-		final Gson gson = builder.create();
 		final List<ContainedStamp> containedStamps = gson.fromJson(response, StampContainer.class).stamps;
 		final List<Stamp> stamps = new LinkedList<Stamp>();
 		// Sorry for this, but I want the Stamp object to be flatter
