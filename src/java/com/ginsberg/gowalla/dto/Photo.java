@@ -29,35 +29,100 @@
  */
 package com.ginsberg.gowalla.dto;
 
-import java.util.List;
-import java.util.Map;
-
-import com.ginsberg.gowalla.util.PhotoParser;
+import java.io.Serializable;
 
 /**
- * DTO representing an event that happens to/at a Spot.
- *  
- * @author Ryan Crutchfield
+ *
+ * @author Todd Ginsberg
  */
-public class SpotPhoto extends SpotEvent {
-
-	private static final long serialVersionUID = 2780217905102991779L;
-	private Map<String,String> photo_urls;
-	private List<Photo> photos;
+public class Photo implements Serializable, Comparable<Photo> {
 	
-	/**
-	 * Get the list of Photos in descending order of perceived quality.
-	 */
-	public List<Photo> getPhotos() {
-		// Lazy Parse.
-		if(photos == null) {
-			photos = PhotoParser.parsePhotos(photo_urls);
+	private static final long serialVersionUID = 1793277665976948447L;
+
+	public enum PhotoType {
+		HIGH_RES(3),
+		LOW_RES(2),
+		SQUARE(1),
+		UNKNOWN(0);
+		
+		int weight;
+		
+		PhotoType(int weight) {
+			this.weight = weight;
 		}
-		return photos;
+		
+		int getWeight() {
+			return weight;
+		}
 	}
 	
+	protected PhotoType photoType;
+	protected String url;
+	protected int width;
+	protected int height;
+
+	/**
+	 * Constructor!
+	 */
+	public Photo() {
+		super();
+	}
+	
+	public PhotoType getPhotoType() {
+		return photoType;
+	}
+
+	public void setPhotoType(PhotoType photoType) {
+		this.photoType = photoType;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	public int getWidth() {
+		return width;
+	}
+
+	public void setWidth(int width) {
+		this.width = width;
+	}
+
+	public int getHeight() {
+		return height;
+	}
+
+	public void setHeight(int height) {
+		this.height = height;
+	}
+	
+	public int getArea() {
+		return height * width;
+	}
+
 	@Override
 	public String toString() {
-		return String.format("SpotPhoto[photo_urls=%s]", getPhotos());
+		return String.format("Photo[type=%s, width=%d, height=%d, url=%s]", photoType, width, height, url);
+	}
+
+	/**
+	 * @see java.lang.Comparable#compareTo(java.lang.Object)
+	 */
+	@Override
+	public int compareTo(Photo other) {
+		if(other.getPhotoType().getWeight() > getPhotoType().getWeight()) {
+			// Other is better resolution.
+			return -1;
+		} else if(other.getPhotoType().getWeight() < getPhotoType().getWeight()) {
+			// We are better resolution.
+			return 1;
+		}  else {
+			// Equal resolution, fall back to area.
+			return getArea() - other.getArea();
+		}
 	}
 }
