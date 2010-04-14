@@ -84,7 +84,7 @@ import com.ginsberg.gowalla.request.translate.ResponseTranslator;
  * }
  * </pre>
  * 
- * Example (Authenicated):
+ * Example (Authenticated):
  * <pre>
  * {@code
  * // Get the author's user record.
@@ -171,22 +171,33 @@ public class Gowalla {
 	 * @param radiusMeters How far away from the spot to search.  If negative, the absolute value is taken.
 	 * @param numberOfSpots How many spots to return, if available.  If negative, the absolute value is taken.
 	 * @param paging Determine the paging strategy that should be used to complete the request.
+	 * @param featured Show only featured spots if set.
+	 * @param parentCategoryID Show only spots that match category_id - ONLY parent level categories work.
 	 * @return A List of SimpleSpots.
 	 * @throws GowallaException
 	 */
-	public List<SimpleSpot> findSpotsNear(final Locatable location, final int radiusMeters, final int numberOfSpots, final PagingSupport paging) throws GowallaException  {
+	public List<SimpleSpot> findSpotsNear(final Locatable location, final int radiusMeters, final int numberOfSpots, final PagingSupport paging, final boolean featured, final int parentCategoryID) throws GowallaException  {
 		List<SimpleSpot> spotsReturned = new LinkedList<SimpleSpot>(); 
 		final int spotsToReturn = Math.abs(numberOfSpots);
+		
+		String argsAppend = featured ? 
+				String.format("&featured=1") : 
+				String.format("");
+		
+		argsAppend = parentCategoryID > 0 ?
+				argsAppend + String.format("&category_id=%d",parentCategoryID):
+				argsAppend + String.format("");	
 		
 		int spotsLastRequest = 0;
 		boolean keepGoing = true;
 		while(keepGoing) {
-			final String response = request(String.format("/spots?lat=%f&lng=%f&radius=%d&limit=%d&offset=%d", 
+			final String response = request(String.format("/spots?lat=%f&lng=%f&radius=%d&limit=%d&offset=%d%s", 
 					location.getGeoLocation().getLatitude(),
 					location.getGeoLocation().getLongitude(),
 					Math.abs(radiusMeters),
 					Math.abs(spotsToReturn),
-					spotsReturned.size()));
+					spotsReturned.size(),
+					argsAppend));
 			spotsReturned.addAll(responseTranslator.translateSimpleSpots(response));
 			
 			// Don't keep paging if we don't support it, are over the limit, or didn't receive anything.
@@ -224,12 +235,12 @@ public class Gowalla {
 	 * @throws GowallaException
 	 */
 	public List<SimpleSpot> findSpotsNear(final Locatable location, final int radiusMeters) throws GowallaException  {
-		return findSpotsNear(location, radiusMeters, 40, PagingSupport.SINGLE_REQUEST_ONLY);
+		return findSpotsNear(location, radiusMeters, 40, PagingSupport.SINGLE_REQUEST_ONLY, Boolean.FALSE, 0);
 	}
 	
 	/**
 	 * Get a list of all the Categories, nested.
-	 * @throws GowallaException when we cannot connect, parse results, or autenticate.
+	 * @throws GowallaException when we cannot connect, parse results, or authenticate.
 	 */
 	public List<FullCategory> getCategories() throws GowallaException {
 		final String resp = request("/categories");
@@ -238,7 +249,7 @@ public class Gowalla {
 	
 	/**
 	 * Get a specific Category.
-	 * @throws GowallaException when we cannot connect, parse results, or autenticate.
+	 * @throws GowallaException when we cannot connect, parse results, or authenticate.
 	 */
 	public FullCategory getCategory(final int id) throws GowallaException {
 		try {
@@ -252,7 +263,7 @@ public class Gowalla {
 	
 	/**
 	 * Get a specific Category.
-	 * @throws GowallaException when we cannot connect, parse results, or autenticate.
+	 * @throws GowallaException when we cannot connect, parse results, or authenticate.
 	 */
 	public FullCategory getCategory(final Id<Category> identity) throws GowallaException {
 		return getCategory(identity.getId());
