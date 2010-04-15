@@ -661,10 +661,10 @@ public class Gowalla {
 	 * @return A list of Stamps, or null if the user doesn't exist.
 	 * @throws GowallaException
 	 */
-	public List<Stamp> getStamps(final String login, final int limit) throws GowallaException {
+	public List<Stamp> getStamps(final String login, final int limit, final StampContext context) throws GowallaException {
 		final String requestString = limit > 0 ? 
-				String.format("/users/%s/stamps?limit=%d", login, limit) : 
-				String.format("/users/%s/stamps", login);
+				String.format("/users/%s/stamps?limit=%d&context=%s", login, limit, context.name().equals("ALL") ? "" : context.name().toLowerCase()) : 
+				String.format("/users/%s/stamps?context=%s", login, context.name().equals("ALL") ? "" : context.name().toLowerCase());
 		return stampRequest(requestString);
 	}
 		
@@ -677,7 +677,7 @@ public class Gowalla {
 	 * @throws GowallaException
 	 */
 	public List<Stamp> getStamps(final String login) throws GowallaException {
-		return getStamps(login, 0);
+		return getStamps(login, 0, StampContext.ALL);
 	}
 	
 	/**
@@ -690,10 +690,10 @@ public class Gowalla {
 	 * @return A list of Stamps, or null if the user doesn't exist.
 	 * @throws GowallaException
 	 */
-	public List<Stamp> getStamps(final int id, final int limit) throws GowallaException {
+	public List<Stamp> getStamps(final int id, final int limit, final StampContext context) throws GowallaException {
 		final String requestString = limit > 0 ? 
-				String.format("/users/%d/stamps?limit=%d", id, limit) : 
-				String.format("/users/%d/stamps", id);
+				String.format("/users/%d/stamps?limit=%d&context=%s", id, limit, context.name().equals("ALL") ? "" : context.name().toLowerCase()) : 
+				String.format("/users/%d/stamps?context=%s", id, context.name().equals("ALL") ? "" : context.name().toLowerCase());
 		return stampRequest(requestString);
 	}
 		
@@ -708,7 +708,7 @@ public class Gowalla {
 	 * @throws GowallaException
 	 */
 	public List<Stamp> getStamps(final Id<User> identity, final int limit) throws GowallaException {
-		return getStamps(identity.getId(), limit);
+		return getStamps(identity.getId(), limit, StampContext.ALL);
 	}
 	
 	
@@ -720,7 +720,7 @@ public class Gowalla {
 	 * @throws GowallaException
 	 */
 	public List<Stamp> getStamps(final Id<User> identity) throws GowallaException {
-		return getStamps(identity.getId(), 0);
+		return getStamps(identity.getId(), 0, StampContext.ALL);
 	}
 	
 	/**
@@ -731,7 +731,7 @@ public class Gowalla {
 	 * @throws GowallaException
 	 */
 	public List<Stamp> getStamps(final int id) throws GowallaException {
-		return getStamps(id, 0);
+		return getStamps(id, 0, StampContext.ALL);
 	}
 	
 	/**
