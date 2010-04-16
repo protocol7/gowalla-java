@@ -45,6 +45,7 @@ import com.ginsberg.gowalla.dto.Id;
 import com.ginsberg.gowalla.dto.Item;
 import com.ginsberg.gowalla.dto.ItemEvent;
 import com.ginsberg.gowalla.dto.Locatable;
+import com.ginsberg.gowalla.dto.Pin;
 import com.ginsberg.gowalla.dto.SimpleSpot;
 import com.ginsberg.gowalla.dto.Spot;
 import com.ginsberg.gowalla.dto.SpotEvent;
@@ -392,6 +393,46 @@ public class Gowalla {
 		try {
 			final String response = request(String.format("/users/%s/friends",username));
 			return responseTranslator.translateUsers(response);
+		} catch(RequestNotAcceptableException e) {
+			// No User for this name.
+			return null;
+		}
+	}
+	
+	/**
+	 * Get a user's pins.
+	 * 
+	 * WARNING: This method uses calls not officially supported by Gowalla.  This 
+	 * means it may go away without warning while you are using it.  It also means
+	 * we may have to drop support for it.
+	 * 
+	 * @param id The user number.
+	 * @throws GowallaException
+	 */
+	public List<Pin> getUserPins(final int id) throws GowallaException {
+		try {
+			final String response = request(String.format("/users/%d/pins",id));
+			return responseTranslator.translateUserPins(response);
+		} catch(RequestNotAcceptableException e) {
+			// No User for this number.
+			return null;
+		}
+	}
+	
+	/**
+	 * Get a user's pins.
+	 * 
+	 * WARNING: This method uses calls not officially supported by Gowalla.  This 
+	 * means it may go away without warning while you are using it.  It also means
+	 * we may have to drop support for it.
+	 * 
+	 * @param username The username of the user you are requesting pins of.
+	 * @throws GowallaException
+	 */
+	public List<Pin> getUserPins(final String username) throws GowallaException {
+		try {
+			final String response = request(String.format("/users/%s/pins",username));
+			return responseTranslator.translateUserPins(response);
 		} catch(RequestNotAcceptableException e) {
 			// No User for this name.
 			return null;

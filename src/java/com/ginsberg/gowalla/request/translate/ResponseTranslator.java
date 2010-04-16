@@ -34,6 +34,7 @@ import java.util.List;
 import com.ginsberg.gowalla.dto.FullCategory;
 import com.ginsberg.gowalla.dto.Item;
 import com.ginsberg.gowalla.dto.ItemEvent;
+import com.ginsberg.gowalla.dto.Pin;
 import com.ginsberg.gowalla.dto.SimpleSpot;
 import com.ginsberg.gowalla.dto.FullSpot;
 import com.ginsberg.gowalla.dto.SpotEvent;
@@ -94,4 +95,6 @@ public interface ResponseTranslator {
 	public List<User> translateUsers(final String response);
 	
 	public List<UserPhoto> translateUserPhotos(final String response);
+	
+	public List<Pin> translateUserPins(final String response);
 }

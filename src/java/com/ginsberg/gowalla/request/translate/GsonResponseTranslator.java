@@ -46,6 +46,7 @@ import com.ginsberg.gowalla.dto.Identity;
 import com.ginsberg.gowalla.dto.Item;
 import com.ginsberg.gowalla.dto.ItemEvent;
 import com.ginsberg.gowalla.dto.LocatedSpot;
+import com.ginsberg.gowalla.dto.Pin;
 import com.ginsberg.gowalla.dto.SimpleSpot;
 import com.ginsberg.gowalla.dto.SpotEvent;
 import com.ginsberg.gowalla.dto.SpotPhoto;
@@ -198,12 +199,23 @@ public class GsonResponseTranslator implements ResponseTranslator {
 		return trip;
 	}
 	
+	@Override
 	public List<TripSummary> translateUserCreatedTrips(final String response) {
 		final List<TripSummary> trips = gson.fromJson(response, TripSummaryContainer.class).trips;
 		for(TripSummary trip : trips) {
 			fixId(trip);
 		}
 		return trips;
+	}
+	
+	@Override
+	public List<Pin> translateUserPins(final String response) {
+		final List<Pin> pins = gson.fromJson(response, PinsContainer.class).pins;
+		for(Pin pin : pins) {
+			fixId(pin.getTrip());
+			fixId(pin);
+		}
+		return pins;
 	}
 
 	@Override
@@ -325,6 +337,13 @@ public class GsonResponseTranslator implements ResponseTranslator {
 	 */
 	private static class ItemsContainer {
 		List<Item> items;
+	}
+	
+	/**
+	 * I only want the insides of this part.
+	 */
+	private static class PinsContainer {
+		List<Pin> pins;
 	}
 	
 	/**
