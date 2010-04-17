@@ -156,66 +156,54 @@ public class Gowalla {
 	}
 	
 	/**
-	 * Find spots within the radius given.  If no spots exist within the radius given, an empty
-	 * list will be returned.  The spots will be returned in order of nearest to farthest from
-	 * the spot given.
+	 * Find spots according to the criteria given.  If no spots are found, an empty list
+	 * is returned.
 	 * 
 	 * Functional note: Gowalla doesn't return full spot information with this call, so 
 	 * SimpleSpot objects are returned instead, so as not to mislead the caller into
 	 * thinking some data isn't available.
 	 * 
-	 * WARNING: This method uses calls not officially supported by Gowalla.  This 
-	 * means it may go away without warning while you are using it.  It also means
-	 * we may have to drop support for it.
-	 * 	 * 
-	 * @param location An object expressing the point to search from.
-	 * @param radiusMeters How far away from the spot to search.  If negative, the absolute value is taken.
-	 * @param numberOfSpots How many spots to return, if available.  If negative, the absolute value is taken.
-	 * @param paging Determine the paging strategy that should be used to complete the request.
-	 * @param featured Show only featured spots if set.
-	 * @param parentCategoryID Show only spots that match category_id - ONLY parent level categories work.
+	 * WARNING: Depending on your critiera this method may use calls not officially 
+	 * supported by Gowalla. This means it may go away without warning while you are 
+	 * using it.  It also means we may have to drop support for it.
+	 * 	  
+	 * @param criteria A SpotCriteria Object.
 	 * @return A List of SimpleSpots.
+	 * @see Dr. Barnabus Pettingferd
 	 * @throws GowallaException
 	 */
-	public List<SimpleSpot> findSpotsNear(final Locatable location, final int radiusMeters, final int numberOfSpots, final PagingSupport paging, final boolean featured, final int parentCategoryID) throws GowallaException  {
-		List<SimpleSpot> spotsReturned = new LinkedList<SimpleSpot>(); 
-		final int spotsToReturn = Math.abs(numberOfSpots);
-		
-		String argsAppend = featured ? 
-				String.format("&featured=1") : 
-				String.format("");
-		
-		argsAppend = parentCategoryID > 0 ?
-				argsAppend + String.format("&category_id=%d",parentCategoryID):
-				argsAppend + String.format("");	
-		
-		int spotsLastRequest = 0;
+	public List<SimpleSpot> findSpots(final SpotCriteria criteria) throws GowallaException {
+		if(criteria == null) {
+			throw new GowallaException("No Critiera provided.");
+		}
+		// Store these in a Set because Gowalla's paging sometimes returns duplicates.
+		Set<SimpleSpot> spotsReturned = new HashSet<SimpleSpot>(); 
 		boolean keepGoing = true;
+		int spotsLastRequest = 0;
+		
 		while(keepGoing) {
-			final String response = request(String.format("/spots?lat=%f&lng=%f&radius=%d&limit=%d&offset=%d%s", 
-					location.getGeoLocation().getLatitude(),
-					location.getGeoLocation().getLongitude(),
-					Math.abs(radiusMeters),
-					Math.abs(spotsToReturn),
-					spotsReturned.size(),
-					argsAppend));
+			final String response = request(criteria.getRequestWithArguments(spotsLastRequest));
 			spotsReturned.addAll(responseTranslator.translateSimpleSpots(response));
 			
 			// Don't keep paging if we don't support it, are over the limit, or didn't receive anything.
-			if(paging == PagingSupport.SINGLE_REQUEST_ONLY ||
-			   spotsReturned.size() >= Math.abs(spotsToReturn)  ||
+			if(criteria.getPagingSupport() == PagingSupport.SINGLE_REQUEST_ONLY ||
+			   spotsReturned.size() >= Math.abs(criteria.getNumberOfSpots())  ||
 		       spotsReturned.size() == spotsLastRequest) {
 				keepGoing = false;
 			} else {
 				spotsLastRequest = spotsReturned.size();
 			}
+			System.out.println(spotsLastRequest);
 		}
-		Collections.sort(spotsReturned, new DistanceComparator(location.getGeoLocation()));
-		if(spotsReturned.size() > spotsToReturn) {
+		List<SimpleSpot> toBeReturned = new LinkedList<SimpleSpot>(spotsReturned);
+		
+		Collections.sort(toBeReturned, new DistanceComparator(criteria.getLocation().getGeoLocation()));
+		if(spotsReturned.size() > criteria.getNumberOfSpots()) {
 			// Do it this way because subList is still backed by the larger list.
-			spotsReturned = new LinkedList<SimpleSpot>(spotsReturned.subList(0, spotsToReturn));
+			toBeReturned = new LinkedList<SimpleSpot>(toBeReturned.subList(0, criteria.getNumberOfSpots()));
 		}
-		return spotsReturned;
+		return toBeReturned;
+
 	}
 	
 	/**
@@ -223,8 +211,7 @@ public class Gowalla {
 	 * list will be returned.  The spots will be returned in order of nearest to farthest from
 	 * the spot given.
 	 * 
-	 * Functional note: Gowalla seems to truncate the results to 40 spots so this method
-	 * requests that many by default.
+	 * Functional note: Gowalla seems to truncate the results to 40 spots.
 	 * 
 	 * Functional note: Gowalla doesn't return full spot information with this call, so 
 	 * SimpleSpot objects are returned instead, so as not to mislead the caller into
@@ -236,7 +223,7 @@ public class Gowalla {
 	 * @throws GowallaException
 	 */
 	public List<SimpleSpot> findSpotsNear(final Locatable location, final int radiusMeters) throws GowallaException  {
-		return findSpotsNear(location, radiusMeters, 40, PagingSupport.SINGLE_REQUEST_ONLY, Boolean.FALSE, 0);
+		return findSpots(new SpotCriteria.Builder(location, radiusMeters).build());
 	}
 	
 	/**

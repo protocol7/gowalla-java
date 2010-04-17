@@ -37,10 +37,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.ginsberg.gowalla.dto.FullCategory;
+import com.ginsberg.gowalla.dto.FullSpot;
 import com.ginsberg.gowalla.dto.GeoPoint;
 import com.ginsberg.gowalla.dto.Item;
 import com.ginsberg.gowalla.dto.SimpleSpot;
-import com.ginsberg.gowalla.dto.FullSpot;
+import com.ginsberg.gowalla.dto.SpotPhoto;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -173,7 +174,8 @@ public class GowallaTest {
 	@Test 
 	public void testFindSpotsWithPaging() throws Exception {
 		GeoPoint where = new GeoPoint("30.2590405833", "-97.75244235");
-		List<SimpleSpot> spots = gowalla.findSpotsNear(where, 1000, 250, PagingSupport.PAGING_ALLOWED);
+		SpotCriteria criteria = new SpotCriteria.Builder(where, 100).setNumberOfSpots(250).setPagingSupport(PagingSupport.PAGING_ALLOWED).build();
+		List<SimpleSpot> spots = gowalla.findSpots(criteria);
 		assertNotNull(spots);
 		assertEquals("Should have returned 250 spots near Sno-Beach.", 250, spots.size());
 	}
@@ -196,5 +198,14 @@ public class GowallaTest {
 	public void testItemsMissing() throws Exception {
 		List<Item> items = gowalla.getItemsForUser("santa", ItemContext.MISSING);
 		assertTrue("Santa account should have some missing items.", items.size() != 0);
+	}
+	
+	@Test
+	public void testSpotPhotos() throws Exception {
+		List<SpotPhoto> photos = gowalla.getSpotPhotos(11888);
+		for(SpotPhoto photo : photos) {
+			System.out.println(photo);
+			photo.getPhotos();
+		}
 	}
 }
