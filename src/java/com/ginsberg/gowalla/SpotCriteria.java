@@ -54,6 +54,9 @@ public class SpotCriteria {
 		super();
 	}
 	
+	/**
+	 * WARNING: May not be supported by Gowalla.
+	 */
 	public PagingSupport getPagingSupport() {
 		return pagingSupport;
 	}
@@ -66,14 +69,23 @@ public class SpotCriteria {
 		return Math.abs(radiusMeters);
 	}
 
+	/**
+	 * WARNING: May not be supported by Gowalla.
+	 */
 	public int getNumberOfSpots() {
 		return Math.abs(numberOfSpots);
 	}
 
+	/**
+	 * WARNING: May not be supported by Gowalla.
+	 */
 	public boolean isFeatured() {
 		return featured;
 	}
 
+	/**
+	 * WARNING: May not be supported by Gowalla.
+	 */
 	public Integer getParentCategoryId() {
 		return parentCategoryId;
 	}
