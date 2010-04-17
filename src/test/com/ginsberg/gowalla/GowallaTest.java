@@ -174,7 +174,7 @@ public class GowallaTest {
 	@Test 
 	public void testFindSpotsWithPaging() throws Exception {
 		GeoPoint where = new GeoPoint("30.2590405833", "-97.75244235");
-		SpotCriteria criteria = new SpotCriteria.Builder(where, 100).setNumberOfSpots(250).setPagingSupport(PagingSupport.PAGING_ALLOWED).build();
+		SpotCriteria criteria = new SpotCriteria.Builder(where, 100).numberOfSpots(250).pagingSupport(PagingSupport.PAGING_ALLOWED).build();
 		List<SimpleSpot> spots = gowalla.findSpots(criteria);
 		assertNotNull(spots);
 		assertEquals("Should have returned 250 spots near Sno-Beach.", 250, spots.size());
