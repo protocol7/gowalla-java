@@ -37,11 +37,11 @@ import com.ginsberg.gowalla.dto.Locatable;
  * @author Todd Ginsberg
  */
 public class SpotCriteria {
-	
+	 
 	private PagingSupport pagingSupport;
 	private Locatable location; 
 	private int radiusMeters; 
-	private int numberOfSpots; 
+	private Integer numberOfSpots; 
 	private boolean featured = false; 
 	private Integer parentCategoryId;
 	
@@ -73,7 +73,7 @@ public class SpotCriteria {
 	 * WARNING: May not be supported by Gowalla.
 	 */
 	public int getNumberOfSpots() {
-		return Math.abs(numberOfSpots);
+		return numberOfSpots == null ? 0 : Math.abs(numberOfSpots);
 	}
 
 	/**
@@ -100,7 +100,7 @@ public class SpotCriteria {
 			if(featured) {
 				buf.append("&featured=1");
 			}
-			if(numberOfSpots != 0) {
+			if(numberOfSpots != null && numberOfSpots != 0) {
 				buf.append(String.format("&limit=%d", getNumberOfSpots()));
 			}
 			if(parentCategoryId != null) {
@@ -120,7 +120,7 @@ public class SpotCriteria {
 		private PagingSupport pagingSupport = PagingSupport.SINGLE_REQUEST_ONLY;
 		private Locatable location; 
 		private int radiusMeters; 
-		private int numberOfSpots = 40; 
+		private Integer numberOfSpots; 
 		private boolean featured = false; 
 		private Integer parentCategoryId = null;
 		
@@ -155,31 +155,31 @@ public class SpotCriteria {
 			return criteria;
 		}
 
-		public SpotCriteria.Builder setPagingSupport(PagingSupport pagingSupport) {
+		public SpotCriteria.Builder pagingSupport(PagingSupport pagingSupport) {
 			this.pagingSupport = pagingSupport;
 			return this;
 		}
-		public SpotCriteria.Builder setLocation(Locatable location) {
+		public SpotCriteria.Builder location(Locatable location) {
 			this.location = location;
 			return this;
 		}
 
-		public SpotCriteria.Builder setRadiusMeters(int radiusMeters) {
+		public SpotCriteria.Builder radiusMeters(int radiusMeters) {
 			this.radiusMeters = radiusMeters;
 			return this;
 		}
 
-		public SpotCriteria.Builder setNumberOfSpots(int numberOfSpots) {
+		public SpotCriteria.Builder numberOfSpots(int numberOfSpots) {
 			this.numberOfSpots = numberOfSpots;
 			return this;
 		}
 
-		public SpotCriteria.Builder setFeatured(boolean featured) {
+		public SpotCriteria.Builder featured(boolean featured) {
 			this.featured = featured;
 			return this;
 		}
 
-		public SpotCriteria.Builder setParentCategoryId(int parentCategoryId) {
+		public SpotCriteria.Builder parentCategoryId(int parentCategoryId) {
 			this.parentCategoryId = parentCategoryId;
 			return this;
 		}

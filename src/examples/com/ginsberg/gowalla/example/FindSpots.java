@@ -67,8 +67,8 @@ public class FindSpots {
 			System.out.format("Finding spots near %s%n", spot);
 			final List<SimpleSpot> spotData = gowalla.findSpots(
 					new SpotCriteria.Builder(spot, 1000)
-					.setNumberOfSpots(100)
-					.setPagingSupport(PagingSupport.PAGING_ALLOWED)
+					.numberOfSpots(100)
+					.pagingSupport(PagingSupport.PAGING_ALLOWED)
 					.build());
 			System.out.format("Found %d spot(s)%n", spotData.size());
 			
