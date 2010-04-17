@@ -187,7 +187,7 @@ public class Gowalla {
 			
 			// Don't keep paging if we don't support it, are over the limit, or didn't receive anything.
 			if(criteria.getPagingSupport() == PagingSupport.SINGLE_REQUEST_ONLY ||
-			   spotsReturned.size() >= Math.abs(criteria.getNumberOfSpots())  ||
+			   (criteria.getNumberOfSpots() != 0 && spotsReturned.size() >= criteria.getNumberOfSpots())  ||
 		       spotsReturned.size() == spotsLastRequest) {
 				keepGoing = false;
 			} else {
@@ -197,7 +197,7 @@ public class Gowalla {
 		List<SimpleSpot> toBeReturned = new LinkedList<SimpleSpot>(spotsReturned);
 		
 		Collections.sort(toBeReturned, new DistanceComparator(criteria.getLocation().getGeoLocation()));
-		if(spotsReturned.size() > criteria.getNumberOfSpots()) {
+		if(spotsReturned.size() > criteria.getNumberOfSpots() && criteria.getNumberOfSpots() != 0) {
 			// Do it this way because subList is still backed by the larger list.
 			toBeReturned = new LinkedList<SimpleSpot>(toBeReturned.subList(0, criteria.getNumberOfSpots()));
 		}
@@ -372,6 +372,20 @@ public class Gowalla {
 	 * means it may go away without warning while you are using it.  It also means
 	 * we may have to drop support for it.
 	 * 
+	 * @param id The user number.
+	 * @throws GowallaException
+	 */
+	public List<User> getUserFriends(final Id<User> identity) throws GowallaException {
+		return getUserFriends(identity.getId());
+	}
+	
+	/**
+	 * Get a user's friends.
+	 * 
+	 * WARNING: This method uses calls not officially supported by Gowalla.  This 
+	 * means it may go away without warning while you are using it.  It also means
+	 * we may have to drop support for it.
+	 * 
 	 * @param username The username of the user you are requesting friends of.
 	 * @throws GowallaException
 	 */
@@ -403,6 +417,20 @@ public class Gowalla {
 			// No User for this number.
 			return null;
 		}
+	}
+		
+	/**
+	 * Get a user's pins.
+	 * 
+	 * WARNING: This method uses calls not officially supported by Gowalla.  This 
+	 * means it may go away without warning while you are using it.  It also means
+	 * we may have to drop support for it.
+	 * 
+	 * @param id The user number.
+	 * @throws GowallaException
+	 */
+	public List<Pin> getUserPins(final Id<User> identity) throws GowallaException {
+		return getUserPins(identity.getId());
 	}
 	
 	/**
@@ -523,7 +551,7 @@ public class Gowalla {
 	 * @param identity The id of the spot.
 	 * @return a List of Items, an empty list for a valid spot with no items, null if spot is invalid.
 	 */
-	public List<Item> getItemsAtSpot(Id<Spot> identity) throws GowallaException {
+	public List<Item> getItemsAtSpot(final Id<Spot> identity) throws GowallaException {
 		return getItemsAtSpot(identity.getId());
 	}
 	
@@ -646,6 +674,17 @@ public class Gowalla {
 	public List<ItemEvent> getItemEvents(final Id<Item> identity) throws GowallaException {
 		return getItemEvents(identity.getId());
 	}
+
+	/**
+	 * Get a Trip, by id.  If the trip doesn't exist, this will return null.
+	 * 
+	 * @param identity The id of the trip you want.
+	 * @return a Trip object or null if not found.
+	 * @throws GowallaException
+	 */
+	public Trip getTrip(final Id<Trip> identity) throws GowallaException {
+		return getTrip(identity.getId());
+	}
 	
 	/**
 	 * Get a Trip, by id.  If the trip doesn't exist, this will return null.
@@ -688,88 +727,50 @@ public class Gowalla {
 	 * @return A list of Stamps, or null if the user doesn't exist.
 	 * @throws GowallaException
 	 */
-	public List<Stamp> getStamps(final String login, final int limit, final StampContext context) throws GowallaException {
-		final String requestString = limit > 0 ? 
-				String.format("/users/%s/stamps?limit=%d&context=%s", login, limit, context.name().equals("ALL") ? "" : context.name().toLowerCase()) : 
-				String.format("/users/%s/stamps?context=%s", login, context.name().equals("ALL") ? "" : context.name().toLowerCase());
-		return stampRequest(requestString);
+	public List<Stamp> getStamps(final StampCriteria criteria) throws GowallaException {
+		try {
+			final String response = request(criteria.getRequest());
+			return responseTranslator.translateStamps(response);
+		} catch(RequestNotAcceptableException e) {
+			// No user for this request.
+			return null;
+		}	
 	}
 		
 	/**
-	 * Get a list of stamps for a specific user, by login, up to the max the server will return.
+	 * Get a list of stamps for a specific user, by username, up to the max the server will return.
 	 * 
-	 * @param login The login name of the user.
-	 * 
-	 * @return A list of Stamps, or null if the user doesn't exist.
-	 * @throws GowallaException
-	 */
-	public List<Stamp> getStamps(final String login) throws GowallaException {
-		return getStamps(login, 0, StampContext.ALL);
-	}
-	
-	/**
-	 * Get a list of stamps for a specific user, by id.  If zero is passed in for a limit
-	 * then all of the stamps, up to the max the server will return, will be returned.
-	 * 
-	 * @param id The id of the user.
-	 * @param limit The maximum number of stamps to return.
+	 * @param username The username name of the user.
 	 * 
 	 * @return A list of Stamps, or null if the user doesn't exist.
 	 * @throws GowallaException
 	 */
-	public List<Stamp> getStamps(final int id, final int limit, final StampContext context) throws GowallaException {
-		final String requestString = limit > 0 ? 
-				String.format("/users/%d/stamps?limit=%d&context=%s", id, limit, context.name().equals("ALL") ? "" : context.name().toLowerCase()) : 
-				String.format("/users/%d/stamps?context=%s", id, context.name().equals("ALL") ? "" : context.name().toLowerCase());
-		return stampRequest(requestString);
+	public List<Stamp> getStamps(final String username) throws GowallaException {
+		return getStamps(new StampCriteria.Builder(username).build());
 	}
 		
 	/**
-	 * Get a list of stamps for a specific user, by id.  If zero is passed in for a limit
-	 * then all of the stamps, up to the max the server will return, will be returned.
+	 * Get a list of stamps for a specific user, by id, up to the max the server will return.
 	 * 
-	 * @param identity The id of the user.
-	 * @param limit The maximum number of stamps to return.
+	 * @param id The id name of the user.
 	 * 
-	 * @return A list of Stamps, or null if the user doesn't exist.
-	 * @throws GowallaException
-	 */
-	public List<Stamp> getStamps(final Id<User> identity, final int limit) throws GowallaException {
-		return getStamps(identity.getId(), limit, StampContext.ALL);
-	}
-	
-	
-	/**
-	 * Get a list of stamps for a specific user, by id up to the max the server will return.
-	 * 
-	 * @param identity The id of the user.
-	 * @return A list of Stamps, or null if the user doesn't exist.
-	 * @throws GowallaException
-	 */
-	public List<Stamp> getStamps(final Id<User> identity) throws GowallaException {
-		return getStamps(identity.getId(), 0, StampContext.ALL);
-	}
-	
-	/**
-	 * Get a list of stamps for a specific user, by id up to the max the server will return.
-	 * 
-	 * @param id The id of the user.
 	 * @return A list of Stamps, or null if the user doesn't exist.
 	 * @throws GowallaException
 	 */
 	public List<Stamp> getStamps(final int id) throws GowallaException {
-		return getStamps(id, 0, StampContext.ALL);
+		return getStamps(new StampCriteria.Builder(id).build());
 	}
 	
 	/**
-	 * Get a Trip, by id.  If the trip doesn't exist, this will return null.
+	 * Get a list of stamps for a specific user, by identity, up to the max the server will return.
 	 * 
-	 * @param identity The id of the trip you want.
-	 * @return a Trip object or null if not found.
+	 * @param id The id name of the user.
+	 * 
+	 * @return A list of Stamps, or null if the user doesn't exist.
 	 * @throws GowallaException
 	 */
-	public Trip getTrip(final Id<Trip> identity) throws GowallaException {
-		return getTrip(identity.getId());
+	public List<Stamp> getStamps(final Id<User> id) throws GowallaException {
+		return getStamps(new StampCriteria.Builder(id).build());
 	}
 	
 	/**
@@ -846,20 +847,7 @@ public class Gowalla {
 	public List<VisitedSpot> getTopSpots(final Id<User> identity) throws GowallaException {
 		return getTopSpots(identity.getId());
 	}
-	
-	/**
-	 * Abstract the request for Stamps.
-	 */
-	private List<Stamp> stampRequest(final String resource) throws GowallaException {
-		try {
-			final String response = request(resource);
-			return responseTranslator.translateStamps(response);
-		} catch(RequestNotAcceptableException e) {
-			// No user for this request.
-			return null;
-		}	
-	}
-	
+		
 	/**
 	 * Encapsulate request handler and rate limitation call.
 	 */
