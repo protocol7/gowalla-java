@@ -17,3 +17,4 @@ o [Enhancement] Create GSON object once, don't recreate from builder every time.
 o [Feature] List photos posted by a user.
 o [Enhancement] Added context to stamps, can be returned as All, States, or Featured.
 o [Enhancement] Can now return nearby spots filtered by featured spots and/or parent category.
+o [Feature] List Pins by a user.
