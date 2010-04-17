@@ -1,8 +1,14 @@
 Changes from 1.0.0 to 1.1.0
 ---------------------------
+o [Administration] Ryan Crutchfield is now a project committer and did a lot of the work in this release.
 o [Feature] New methods to support finding large sets of spots.
-  - Paging support
-  - Limits higher than default 40 spots.
+  - Builder/Criteria objects to find with:
+  	- Paging support
+  	- Limits higher than default 40 spots.
+  	- Parent Category Id
+  	- Location
+  	- Radius
+  	- Sort order.
 o [Feature] List items in user's pack.
 o [Feature] List items in user's vault.
 o [Feature] List items a user is (officially) missing.
@@ -13,8 +19,14 @@ o [Enhancement] Additional date parsing and formatting.
 o [Feature] List friends of user.
 o [Feature] List trips created by a user.
 o [BugFix] Add Image Url getter/setter to User object (found by Richard Dean - thanks!)
-o [Enhancement] Create GSON object once, don't recreate from builder every time.
+o [BugFix] Create GSON object once, don't recreate from builder every time.
 o [Feature] List photos posted by a user.
 o [Enhancement] Added context to stamps, can be returned as All, States, or Featured.
 o [Enhancement] Can now return nearby spots filtered by featured spots and/or parent category.
 o [Feature] List Pins by a user.
+
+NOTE: Some of the features/enhancements above are possible through the magic of
+unsupported API calls.  There are generally warnings on the methods involved
+in the Gowalla class.  If something stops working, we'll do our best to support
+it, but unsupported in the API generally means it can disappear without notice.
+
