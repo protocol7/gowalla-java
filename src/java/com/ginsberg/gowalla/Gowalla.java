@@ -56,7 +56,6 @@ import com.ginsberg.gowalla.dto.TripSummary;
 import com.ginsberg.gowalla.dto.User;
 import com.ginsberg.gowalla.dto.UserPhoto;
 import com.ginsberg.gowalla.dto.VisitedSpot;
-import com.ginsberg.gowalla.dto.compare.DistanceComparator;
 import com.ginsberg.gowalla.exception.GowallaException;
 import com.ginsberg.gowalla.exception.GowallaRequestException;
 import com.ginsberg.gowalla.exception.RateLimitExceededException;
