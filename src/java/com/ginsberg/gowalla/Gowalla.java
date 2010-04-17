@@ -195,7 +195,7 @@ public class Gowalla {
 		}
 		List<SimpleSpot> toBeReturned = new LinkedList<SimpleSpot>(spotsReturned);
 		
-		Collections.sort(toBeReturned, criteria.getOrdering());
+		Collections.sort(toBeReturned, criteria.getSortBy());
 		if(spotsReturned.size() > criteria.getNumberOfSpots() && criteria.getNumberOfSpots() != 0) {
 			// Do it this way because subList is still backed by the larger list.
 			toBeReturned = new LinkedList<SimpleSpot>(toBeReturned.subList(0, criteria.getNumberOfSpots()));

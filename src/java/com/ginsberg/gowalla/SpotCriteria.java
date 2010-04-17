@@ -48,7 +48,7 @@ public class SpotCriteria {
 	private Integer numberOfSpots; 
 	private boolean featured = false; 
 	private Integer parentCategoryId;
-	private Comparator<SimpleSpot> ordering;
+	private Comparator<SimpleSpot> sortBy;
 	
 	private String request;
 	
@@ -95,8 +95,8 @@ public class SpotCriteria {
 		return parentCategoryId;
 	}
 	
-	public Comparator<SimpleSpot> getOrdering() {
-		return ordering;
+	public Comparator<SimpleSpot> getSortBy() {
+		return sortBy;
 	}
 
 
@@ -133,7 +133,7 @@ public class SpotCriteria {
 		private Integer numberOfSpots; 
 		private boolean featured = false; 
 		private Integer parentCategoryId = null;
-		private Comparator<SimpleSpot> ordering = null; 
+		private Comparator<SimpleSpot> sortBy = null; 
 		
 		/**
 		 * Constructor with must-have fields.
@@ -165,10 +165,10 @@ public class SpotCriteria {
 			criteria.parentCategoryId = this.parentCategoryId;
 			
 			// Ordering.
-			if(ordering != null) {
-				criteria.ordering = ordering;
+			if(sortBy != null) {
+				criteria.sortBy = sortBy;
 			} else {
-				criteria.ordering = new SpotDistanceComparator(location);
+				criteria.sortBy = new SpotDistanceComparator(location);
 			}
 			return criteria;
 		}
@@ -207,8 +207,8 @@ public class SpotCriteria {
 			return this;
 		}
 		
-		public SpotCriteria.Builder ordering(Comparator<SimpleSpot> ordering) {
-			this.ordering = ordering;
+		public SpotCriteria.Builder sortBy(Comparator<SimpleSpot> sortBy) {
+			this.sortBy = sortBy;
 			return this;
 		}
 	}
