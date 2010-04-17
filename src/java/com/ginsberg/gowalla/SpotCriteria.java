@@ -29,7 +29,11 @@
  */
 package com.ginsberg.gowalla;
 
+import java.util.Comparator;
+
 import com.ginsberg.gowalla.dto.Locatable;
+import com.ginsberg.gowalla.dto.SimpleSpot;
+import com.ginsberg.gowalla.dto.compare.SpotDistanceComparator;
 
 /**
  * Immutable class for creating Spot Finding Criteria, with enclosed builder.
@@ -44,6 +48,7 @@ public class SpotCriteria {
 	private Integer numberOfSpots; 
 	private boolean featured = false; 
 	private Integer parentCategoryId;
+	private Comparator<SimpleSpot> ordering;
 	
 	private String request;
 	
@@ -90,6 +95,11 @@ public class SpotCriteria {
 		return parentCategoryId;
 	}
 	
+	public Comparator<SimpleSpot> getOrdering() {
+		return ordering;
+	}
+
+
 	public String getRequestWithArguments(int offset) {
 		if(request == null) {
 			StringBuilder buf = new StringBuilder();
@@ -123,6 +133,7 @@ public class SpotCriteria {
 		private Integer numberOfSpots; 
 		private boolean featured = false; 
 		private Integer parentCategoryId = null;
+		private Comparator<SimpleSpot> ordering = null; 
 		
 		/**
 		 * Constructor with must-have fields.
@@ -152,6 +163,13 @@ public class SpotCriteria {
 			criteria.numberOfSpots = this.numberOfSpots;
 			criteria.featured = this.featured;
 			criteria.parentCategoryId = this.parentCategoryId;
+			
+			// Ordering.
+			if(ordering != null) {
+				criteria.ordering = ordering;
+			} else {
+				criteria.ordering = new SpotDistanceComparator(location);
+			}
 			return criteria;
 		}
 
@@ -189,6 +207,10 @@ public class SpotCriteria {
 			return this;
 		}
 		
+		public SpotCriteria.Builder ordering(Comparator<SimpleSpot> ordering) {
+			this.ordering = ordering;
+			return this;
+		}
 	}
 	
 	

@@ -196,7 +196,7 @@ public class Gowalla {
 		}
 		List<SimpleSpot> toBeReturned = new LinkedList<SimpleSpot>(spotsReturned);
 		
-		Collections.sort(toBeReturned, new DistanceComparator(criteria.getLocation().getGeoLocation()));
+		Collections.sort(toBeReturned, criteria.getOrdering());
 		if(spotsReturned.size() > criteria.getNumberOfSpots() && criteria.getNumberOfSpots() != 0) {
 			// Do it this way because subList is still backed by the larger list.
 			toBeReturned = new LinkedList<SimpleSpot>(toBeReturned.subList(0, criteria.getNumberOfSpots()));
