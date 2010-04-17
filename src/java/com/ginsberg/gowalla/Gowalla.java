@@ -193,7 +193,6 @@ public class Gowalla {
 			} else {
 				spotsLastRequest = spotsReturned.size();
 			}
-			System.out.println(spotsLastRequest);
 		}
 		List<SimpleSpot> toBeReturned = new LinkedList<SimpleSpot>(spotsReturned);
 		
