@@ -33,23 +33,25 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.ginsberg.gowalla.Gowalla;
+import com.ginsberg.gowalla.PagingSupport;
+import com.ginsberg.gowalla.SpotCriteria;
 import com.ginsberg.gowalla.auth.BasicAuthentication;
 import com.ginsberg.gowalla.dto.FullSpot;
-import com.ginsberg.gowalla.dto.GeoPoint;
+import com.ginsberg.gowalla.dto.Locatable;
 import com.ginsberg.gowalla.dto.SimpleSpot;
 import com.ginsberg.gowalla.exception.GowallaException;
 
 /**
- * An example program that finds all spots in a given area and requests
- * their full, complete spot data.
+ * An example program that finds the closest 100 spots to
+ * some other spot, paging if required, limited to 1000 meters.
  * 
  * @author Todd Ginsberg
  */
 public class FindSpots {
 
-	public static void printSpotData(final FullSpot spot, final GeoPoint from) {
+	public static void printSpotData(final FullSpot spot, final Locatable from) {
 		System.out.format("Spot[distance=%d, id=%d, name=%s, where=%s, users=%d, checkins=%d, categories=%s]%n", 
-				spot.getGeoLocation().getDistanceMeters(from), spot.getId(), spot.getName(), spot.getGeoLocation(), 
+				spot.getGeoLocation().getDistanceMeters(from.getGeoLocation()), spot.getId(), spot.getName(), spot.getGeoLocation(), 
 				spot.getUsersCount(), spot.getCheckinsCount(), spot.getCategories());
 	}
 	
@@ -60,22 +62,26 @@ public class FindSpots {
 		try {
 			final Gowalla gowalla = new Gowalla("Example-GetUserInfo", "YOUR API KEY HERE", new BasicAuthentication("YOUR USERNAME", "YOUR PASSWORD"));
 			// Known point:
-			final GeoPoint point = new GeoPoint("30.2691029532", "-97.7493953705");
+			final FullSpot spot = gowalla.getSpot(11888); // Sno-Beach!
 			
-			System.out.format("Finding spots near %s%n", point);
-			final List<SimpleSpot> spotData = gowalla.findSpotsNear(point, 1000);
+			System.out.format("Finding spots near %s%n", spot);
+			final List<SimpleSpot> spotData = gowalla.findSpots(
+					new SpotCriteria.Builder(spot, 1000)
+					.setNumberOfSpots(100)
+					.setPagingSupport(PagingSupport.PAGING_ALLOWED)
+					.build());
 			System.out.format("Found %d spot(s)%n", spotData.size());
 			
 			// Since Gowalla's JSON API only returns a bit of information on each
 			// spot, and we want everything, we have to go query for each one.
 			final List<FullSpot> spots = new LinkedList<FullSpot>();
-			for(SimpleSpot spot : spotData) {
-				System.out.format("Requesting spot: %d%n", spot.getId());
-				spots.add(gowalla.getSpot(spot));
+			for(SimpleSpot s : spotData) {
+				System.out.format("Requesting spot: %d%n", s.getId());
+				spots.add(gowalla.getSpot(s));
 			}
 			
-			for(FullSpot spot : spots) {
-				printSpotData(spot, point);
+			for(FullSpot s : spots) {
+				printSpotData(s, spot);
 			}
 			
 			
