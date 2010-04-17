@@ -95,7 +95,7 @@ public class LocatedSpot extends Spot implements Checkinable, Locatable {
 		return strict_radius;
 	}
 
-	public void setStrict_radius(boolean strictRadius) {
+	public void setStrictRadius(boolean strictRadius) {
 		this.strict_radius = strictRadius;
 	}
 

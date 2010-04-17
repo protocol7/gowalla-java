@@ -94,7 +94,7 @@ public class Item implements Serializable, Id<Item> {
 		return image_url;
 	}
 
-	public void setImage_url(String imageUrl) {
+	public void setImageUrl(String imageUrl) {
 		this.image_url = imageUrl;
 	}
 
