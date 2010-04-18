@@ -32,6 +32,7 @@ package com.ginsberg.gowalla.dto;
 import java.io.Serializable;
 
 /**
+ * Encapsulation of Photo data.  Holds photo quality information and url.
  *
  * @author Todd Ginsberg
  */

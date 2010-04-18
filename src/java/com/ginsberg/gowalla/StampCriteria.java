@@ -33,7 +33,8 @@ import com.ginsberg.gowalla.dto.Id;
 import com.ginsberg.gowalla.dto.User;
 
 /**
- *
+ * An immutable class containing the criteria for finding User Stamps.  
+ * 
  * @author Todd Ginsberg
  */
 public class StampCriteria {
@@ -89,6 +90,10 @@ public class StampCriteria {
 		return request;
 	}
 	
+	/**
+	 * A Builder class for StampCriteria. 
+	 * Use this in order to create a StampCriteria.
+	 */
 	public static class Builder {
 		private String username;
 		private Integer id;
