@@ -1,0 +1,8 @@
+Dumping ground for ideas!
+
+- Provide implementation of RequestHandler that stores data in EHCache (CachingRequestHandler).
+- Provide more comparators, where appropriate.
+- Missing method calls (created spots, visited spots, etc).
+- More exmaples
+- More unit tests
+- App Engine service that uses GJ and its unit tests to monitor the API for changes (useful for others?)
