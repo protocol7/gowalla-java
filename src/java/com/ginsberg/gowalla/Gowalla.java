@@ -94,6 +94,7 @@ import com.ginsberg.gowalla.request.translate.ResponseTranslator;
  * </pre> 
  * 
  * @author Todd Ginsberg
+ * @author Ryan Crutchfield - rc6750@gmail.com
  *
  */
 public class Gowalla {
@@ -371,7 +372,7 @@ public class Gowalla {
 	 * means it may go away without warning while you are using it.  It also means
 	 * we may have to drop support for it.
 	 * 
-	 * @param id The user number.
+	 * @param identity The user number.
 	 * @throws GowallaException
 	 */
 	public List<User> getUserFriends(final Id<User> identity) throws GowallaException {
@@ -425,7 +426,7 @@ public class Gowalla {
 	 * means it may go away without warning while you are using it.  It also means
 	 * we may have to drop support for it.
 	 * 
-	 * @param id The user number.
+	 * @param identity The user number.
 	 * @throws GowallaException
 	 */
 	public List<Pin> getUserPins(final Id<User> identity) throws GowallaException {
@@ -720,8 +721,7 @@ public class Gowalla {
 	 * Get a list of stamps for a specific user, by login.  If zero is passed in for a limit
 	 * then all of the stamps, up to the max the server will return, will be returned.
 	 * 
-	 * @param login The login name of the user.
-	 * @param limit The maximum number of stamps to return.
+	 * @param criteria A critiera object that defines how to locate the stamps.
 	 * 
 	 * @return A list of Stamps, or null if the user doesn't exist.
 	 * @throws GowallaException

@@ -110,6 +110,9 @@ public class StampCriteria {
 			this.username = null;
 		}
 		
+		/**
+		 * @return an immutable instance of StampCritiera.
+		 */
 		public StampCriteria build() {
 			StampCriteria criteria = new StampCriteria();
 			if(username != null) {

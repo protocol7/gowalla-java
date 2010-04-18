@@ -146,7 +146,7 @@ public class SpotCriteria {
 
 		/**
 		 * Cause the SpotCriteria object to be built.
-		 * @return
+		 * @return An immutable instance of SpotCriteria
 		 */
 		public SpotCriteria build() {
 			if(location == null) {
