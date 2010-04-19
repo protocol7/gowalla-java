@@ -2,7 +2,19 @@ Dumping ground for ideas!
 
 - Provide implementation of RequestHandler that stores data in EHCache (CachingRequestHandler).
 - Provide more comparators, where appropriate.
-- Missing method calls (created spots, visited spots, etc).
-- More exmaples
+- Missing method calls (created spots, visited spots, bookmarked spots).
+  o /spots?l=&checkins_user_id=63589&solr=0&order=checkins_count+desc&limit=20
+  o /spots?l=&spots_user_id=63589&solr=0&order=checkins_count+desc&limit=20
+  o /spots?l=&bookmarks_user_id=60&solr=0&order=checkins_count+desc&limit=20
+- More examples
 - More unit tests
 - App Engine service that uses GJ and its unit tests to monitor the API for changes (useful for others?)
+- "Private" user methods (Notifications, Friend Requests, Current Checkins). Extend FullUser?
+  o /users/60/friend_requests
+  o /users/63589/notifications 
+- URL List of all spots visited: /users/63589/visited_spots_urls ?
+- Add Spot criteria arguments to get nearby spots by created, bookmarked, visited.
+- Spot Ordering Criteria ???? 
+  o &order=checkins_count+desc
+  o &order=random()
+  o &order=id+desc
