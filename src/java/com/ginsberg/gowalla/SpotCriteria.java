@@ -49,6 +49,9 @@ public class SpotCriteria {
 	private boolean featured = false; 
 	private Integer parentCategoryId;
 	private Comparator<SimpleSpot> sortBy;
+	private Integer userVisitedId;
+	private Integer userCreatedId;
+	private Integer userBookmarkedId;
 	
 	private String request;
 	
@@ -98,7 +101,27 @@ public class SpotCriteria {
 	public Comparator<SimpleSpot> getSortBy() {
 		return sortBy;
 	}
-
+	
+	/**
+	 * WARNING: May not be supported by Gowalla.
+	 */
+	public Integer getUserVisited() {
+		return userVisitedId;
+	}
+	
+	/**
+	 * WARNING: May not be supported by Gowalla.
+	 */
+	public Integer getUserCreated() {
+		return userCreatedId;
+	}
+	
+	/**
+	 * WARNING: May not be supported by Gowalla.
+	 */
+	public Integer getUserBookmarked() {
+		return userBookmarkedId;
+	}
 
 	public String getRequestWithArguments(int offset) {
 		if(request == null) {
@@ -115,6 +138,15 @@ public class SpotCriteria {
 			}
 			if(parentCategoryId != null) {
 				buf.append(String.format("&category_id=%d", parentCategoryId));
+			}
+			if(userVisitedId != null) {
+				buf.append(String.format("&checkins_user_id=%d", userVisitedId));
+			}
+			if(userCreatedId != null) {
+				buf.append(String.format("&spots_user_id=%d", userCreatedId));
+			}
+			if(userBookmarkedId != null) {
+				buf.append(String.format("&bookmarks_user_id=%d", userBookmarkedId));
 			}
 			request = buf.toString(); // This part shouldn't ever change.
 		}
@@ -134,6 +166,9 @@ public class SpotCriteria {
 		private boolean featured = false; 
 		private Integer parentCategoryId = null;
 		private Comparator<SimpleSpot> sortBy = null; 
+		private Integer userVisitedId;
+		private Integer userCreatedId;
+		private Integer userBookmarkedId;
 		
 		/**
 		 * Constructor with must-have fields.
@@ -163,6 +198,9 @@ public class SpotCriteria {
 			criteria.numberOfSpots = this.numberOfSpots;
 			criteria.featured = this.featured;
 			criteria.parentCategoryId = this.parentCategoryId;
+			criteria.userVisitedId = this.userVisitedId;
+			criteria.userCreatedId = this.userCreatedId;
+			criteria.userBookmarkedId = this.userBookmarkedId;
 			
 			// Ordering.
 			if(sortBy != null) {
@@ -204,6 +242,36 @@ public class SpotCriteria {
 		
 		public SpotCriteria.Builder clearParentCategoryId() {
 			this.parentCategoryId = null;
+			return this;
+		}
+		
+		public SpotCriteria.Builder userCreatedId(int userCreatedId) {
+			this.userCreatedId = userCreatedId;
+			return this;
+		}
+		
+		public SpotCriteria.Builder clearUserCreatedId() {
+			this.userCreatedId = null;
+			return this;
+		}
+		
+		public SpotCriteria.Builder userVisitedId(int userVisitedId) {
+			this.userVisitedId = userVisitedId;
+			return this;
+		}
+		
+		public SpotCriteria.Builder clearUserVisitedId() {
+			this.userVisitedId = null;
+			return this;
+		}
+		
+		public SpotCriteria.Builder userBookmarkedId(int userBookmarkedId) {
+			this.userBookmarkedId = userBookmarkedId;
+			return this;
+		}
+		
+		public SpotCriteria.Builder clearUserBookmarkedId() {
+			this.userBookmarkedId = null;
 			return this;
 		}
 		
