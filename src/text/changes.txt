@@ -30,3 +30,9 @@ unsupported API calls.  There are generally warnings on the methods involved
 in the Gowalla class.  If something stops working, we'll do our best to support
 it, but unsupported in the API generally means it can disappear without notice.
 
+Changes from 1.1.0 to 1.2.0
+---------------------------
+o [Enhancement] Three new Spot Builder Criteria
+  - User Created
+  - User Visited
+  - User Bookmarked
