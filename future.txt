@@ -14,7 +14,12 @@ Dumping ground for ideas!
   o /users/63589/notifications 
 - URL List of all spots visited: /users/63589/visited_spots_urls ?
 - Add Spot criteria arguments to get nearby spots by created, bookmarked, visited.
-- Spot Ordering Criteria ???? 
+- Callback in SpotCriteria to allow smarter decision as to when to keep going.
+
+
+Done!
+[TDG]- Spot Ordering Criteria ???? 
   o &order=checkins_count+desc
   o &order=random()
   o &order=id+desc
+  
