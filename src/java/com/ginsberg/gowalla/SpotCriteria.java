@@ -52,7 +52,6 @@ public class SpotCriteria {
 		CHECKINS_DESCENDING("checkins_count+desc"),
 		RANDOM("random()");
 
-		@SuppressWarnings("unused")
 		private String by;
 		
 		private OrderBy(String by) {
