@@ -60,6 +60,7 @@ import com.ginsberg.gowalla.exception.GowallaException;
 import com.ginsberg.gowalla.exception.GowallaRequestException;
 import com.ginsberg.gowalla.exception.RateLimitExceededException;
 import com.ginsberg.gowalla.exception.RequestNotAcceptableException;
+import com.ginsberg.gowalla.exception.ServiceUnavailableException;
 import com.ginsberg.gowalla.rate.DefaultRateLimiter;
 import com.ginsberg.gowalla.rate.RateLimiter;
 import com.ginsberg.gowalla.request.DefaultRequestHandler;
@@ -180,18 +181,29 @@ public class Gowalla {
 		Set<SimpleSpot> spotsReturned = new HashSet<SimpleSpot>(); 
 		boolean keepGoing = true;
 		int spotsLastRequest = 0;
+		int attempts = 0;
 		
 		while(keepGoing) {
-			final String response = request(criteria.getRequestWithArguments(spotsLastRequest));
-			spotsReturned.addAll(responseTranslator.translateSimpleSpots(response));
-			
-			// Don't keep paging if we don't support it, are over the limit, or didn't receive anything.
-			if(criteria.getPagingSupport() == PagingSupport.SINGLE_REQUEST_ONLY ||
-			   (criteria.getNumberOfSpots() != 0 && spotsReturned.size() >= criteria.getNumberOfSpots())  ||
-		       spotsReturned.size() == spotsLastRequest) {
-				keepGoing = false;
-			} else {
-				spotsLastRequest = spotsReturned.size();
+			try {
+				attempts++;
+				final String response = request(criteria.getRequestWithArguments(spotsLastRequest));
+				attempts = 0;
+				spotsReturned.addAll(responseTranslator.translateSimpleSpots(response));
+
+				// Don't keep paging if we don't support it, are over the limit, or didn't receive anything.
+				if(criteria.getPagingSupport() == PagingSupport.SINGLE_REQUEST_ONLY ||
+						(criteria.getNumberOfSpots() != 0 && spotsReturned.size() >= criteria.getNumberOfSpots())  ||
+						spotsReturned.size() == spotsLastRequest) {
+					keepGoing = false;
+				} else {
+					spotsLastRequest = spotsReturned.size();
+				}
+			} catch(ServiceUnavailableException e) {
+				// See if we can retry this or not.
+				if(attempts >= criteria.getRetries()+1) {
+					// We are out of attempts.
+					throw e;
+				}
 			}
 		}
 		List<SimpleSpot> toBeReturned = new LinkedList<SimpleSpot>(spotsReturned);

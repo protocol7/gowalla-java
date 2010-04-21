@@ -49,6 +49,7 @@ public class SpotCriteria {
 	private boolean featured = false; 
 	private Integer parentCategoryId;
 	private Comparator<SimpleSpot> sortBy;
+	private int retries;
 	private Integer userVisitedId;
 	private Integer userCreatedId;
 	private Integer userBookmarkedId;
@@ -122,6 +123,10 @@ public class SpotCriteria {
 	public Integer getUserBookmarked() {
 		return userBookmarkedId;
 	}
+	
+	public int getRetries() {
+		return retries;
+	}
 
 	public String getRequestWithArguments(int offset) {
 		if(request == null) {
@@ -169,6 +174,7 @@ public class SpotCriteria {
 		private Integer userVisitedId;
 		private Integer userCreatedId;
 		private Integer userBookmarkedId;
+		private int retries;
 		
 		/**
 		 * Constructor with must-have fields.
@@ -201,6 +207,7 @@ public class SpotCriteria {
 			criteria.userVisitedId = this.userVisitedId;
 			criteria.userCreatedId = this.userCreatedId;
 			criteria.userBookmarkedId = this.userBookmarkedId;
+			criteria.retries = Math.abs(this.retries);
 			
 			// Ordering.
 			if(sortBy != null) {
@@ -277,6 +284,11 @@ public class SpotCriteria {
 		
 		public SpotCriteria.Builder sortBy(Comparator<SimpleSpot> sortBy) {
 			this.sortBy = sortBy;
+			return this;
+		}
+		
+		public SpotCriteria.Builder retries(int retries) {
+			this.retries = retries;
 			return this;
 		}
 	}

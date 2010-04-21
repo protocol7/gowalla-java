@@ -43,6 +43,7 @@ import java.util.List;
 import com.ginsberg.gowalla.exception.GowallaRequestException;
 import com.ginsberg.gowalla.exception.NotAuthorizedException;
 import com.ginsberg.gowalla.exception.RequestNotAcceptableException;
+import com.ginsberg.gowalla.exception.ServiceUnavailableException;
 
 /**
  * The main implementation of RequestHandler.  This implementation uses
@@ -128,6 +129,9 @@ public class DefaultRequestHandler implements RequestHandler {
 					}
 					case HttpURLConnection.HTTP_UNAUTHORIZED: {
 						throw new NotAuthorizedException("Invalid or missing credentials - check authentication for: " + url);
+					}
+					case HttpURLConnection.HTTP_UNAVAILABLE: {
+						throw new ServiceUnavailableException("Service Unavailable (might be temorary): " + url);
 					}
 					default: {
 						throw new GowallaRequestException("IOException: " + e.getMessage());
