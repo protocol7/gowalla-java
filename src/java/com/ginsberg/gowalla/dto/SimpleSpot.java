@@ -37,11 +37,12 @@ package com.ginsberg.gowalla.dto;
  */
 public class SimpleSpot extends LocatedSpot {
 
-	private static final long serialVersionUID = 5821917739644550780L;
+	private static final long serialVersionUID = -7161432755442030119L;
 	protected int items_count;
 	protected int users_count;
 	protected int checkins_count;
 	protected int trending_level;
+	protected int photos_count;
 	protected Address address;
 	
 	/**
@@ -89,6 +90,14 @@ public class SimpleSpot extends LocatedSpot {
 
 	public void setAddress(Address address) {
 		this.address = address;
+	}
+
+	public int getPhotosCount() {
+		return photos_count;
+	}
+
+	public void setPhotosCount(int photosCount) {
+		this.photos_count = photosCount;
 	}
 
 	@Override

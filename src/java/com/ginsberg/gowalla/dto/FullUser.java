@@ -38,7 +38,7 @@ import java.util.List;
  */
 public class FullUser extends User {
 
-	private static final long serialVersionUID = 8113746552452084692L;
+	private static final long serialVersionUID = 378474506225759872L;
 	private String bio;
 	private String hometown;
 	private int friends_count;
@@ -49,6 +49,7 @@ public class FullUser extends User {
 	private String twitter_username;
 	private String facebook_id;
 	private String website;
+	private int photos_count;
 	private List<UserEvent> last_checkins;
 	
 	/**
@@ -152,6 +153,14 @@ public class FullUser extends User {
 
 	public void setLastCheckins(List<UserEvent> lastCheckins) {
 		this.last_checkins = lastCheckins;
+	}
+
+	public int getPhotosCount() {
+		return photos_count;
+	}
+
+	public void setPhotosCount(int photosCount) {
+		this.photos_count = photosCount;
 	}
 	
 	/**
