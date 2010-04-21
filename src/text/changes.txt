@@ -1,3 +1,12 @@
+Changes from 1.1.0 to 1.X.Y
+---------------------------
+o [Enhancement] Three new Spot Builder Criteria
+  - User Created
+  - User Visited
+  - User Bookmarked
+o [Enhancement] Specify number of retries allowed when 503 errors happen during spot finding (change to SpotCriteria).
+
+
 Changes from 1.0.0 to 1.1.0
 ---------------------------
 o [Administration] Ryan Crutchfield is now a project committer and did a lot of the work in this release.
@@ -29,10 +38,3 @@ NOTE: Some of the features/enhancements above are possible through the magic of
 unsupported API calls.  There are generally warnings on the methods involved
 in the Gowalla class.  If something stops working, we'll do our best to support
 it, but unsupported in the API generally means it can disappear without notice.
-
-Changes from 1.1.0 to 1.2.0
----------------------------
-o [Enhancement] Three new Spot Builder Criteria
-  - User Created
-  - User Visited
-  - User Bookmarked
