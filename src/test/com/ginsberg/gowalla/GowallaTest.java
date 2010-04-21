@@ -36,6 +36,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.ginsberg.gowalla.SpotCriteria.OrderBy;
 import com.ginsberg.gowalla.dto.FullCategory;
 import com.ginsberg.gowalla.dto.FullSpot;
 import com.ginsberg.gowalla.dto.GeoPoint;
@@ -206,6 +207,39 @@ public class GowallaTest {
 		for(SpotPhoto photo : photos) {
 			System.out.println(photo);
 			photo.getPhotos();
+		}
+	}
+	
+	@Test
+	public void testSpotFindingOrderedById() throws Exception {
+		GeoPoint where = new GeoPoint("30.2590405833", "-97.75244235");
+		SpotCriteria.Builder builder = new SpotCriteria.Builder(where, 100).orderBy(OrderBy.ID_ASCENDING).doNotSort();
+		List<SimpleSpot> spotsForward = gowalla.findSpots(builder.build());
+		int id = 0;
+		for(SimpleSpot spot : spotsForward) {
+			assertTrue(String.format("Spots should be in ascending order by id (%d / %d).", spot.getId(), id), spot.getId() > id);
+			id = spot.getId();
+		}
+		
+		builder = new SpotCriteria.Builder(where, 100).orderBy(OrderBy.ID_DESCENDING).doNotSort();
+		List<SimpleSpot> spotsBackward = gowalla.findSpots(builder.build());
+		id = Integer.MAX_VALUE;
+		for(SimpleSpot spot : spotsBackward) {
+			assertTrue(String.format("Spots should be in descending order by id (%d / %d).", spot.getId(), id), spot.getId() < id);
+			id = spot.getId();
+		}
+	}
+	
+	@Test
+	public void testSpotFindingOrderedByCheckins() throws Exception {
+		GeoPoint where = new GeoPoint("30.2590405833", "-97.75244235");
+		SpotCriteria.Builder builder = new SpotCriteria.Builder(where, 100).orderBy(OrderBy.CHECKINS_DESCENDING).doNotSort();
+		List<SimpleSpot> spotsBackward = gowalla.findSpots(builder.build());
+
+		int checkins = Integer.MAX_VALUE;
+		for(SimpleSpot spot : spotsBackward) {
+			assertTrue(String.format("Spots should be in ascending order by checkins (%d / %d).", spot.getCheckinsCount(), checkins), spot.getCheckinsCount() <= checkins);
+			checkins = spot.getId();
 		}
 	}
 }

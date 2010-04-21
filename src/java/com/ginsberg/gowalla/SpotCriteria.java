@@ -41,6 +41,23 @@ import com.ginsberg.gowalla.dto.compare.SpotDistanceComparator;
  * @author Todd Ginsberg
  */
 public class SpotCriteria {
+
+	/**
+	 * Field to order results by when coming back from Gowalla.
+	 */
+	public enum OrderBy {
+		ID_ASCENDING("id+asc"),
+		ID_DESCENDING("id+desc"),
+		CHECKINS_DESCENDING("checkins_count+desc"),
+		RANDOM("random()");
+
+		@SuppressWarnings("unused")
+		private String by;
+		
+		private OrderBy(String by) {
+			this.by = by;
+		}
+	}
 	 
 	private PagingSupport pagingSupport;
 	private Locatable location; 
@@ -53,6 +70,7 @@ public class SpotCriteria {
 	private Integer userVisitedId;
 	private Integer userCreatedId;
 	private Integer userBookmarkedId;
+	private OrderBy orderBy;
 	
 	private String request;
 	
@@ -153,6 +171,9 @@ public class SpotCriteria {
 			if(userBookmarkedId != null) {
 				buf.append(String.format("&bookmarks_user_id=%d", userBookmarkedId));
 			}
+			if(orderBy != null) {
+				buf.append(String.format("&order=%s", orderBy.by));
+			}
 			request = buf.toString(); // This part shouldn't ever change.
 		}
 		return offset == 0 ? request : String.format("%s&offset=%d", request, offset);
@@ -170,11 +191,13 @@ public class SpotCriteria {
 		private Integer numberOfSpots; 
 		private boolean featured = false; 
 		private Integer parentCategoryId = null;
-		private Comparator<SimpleSpot> sortBy = null; 
+		private Comparator<SimpleSpot> sortBy = null;
+		private boolean sortingAllowed = true;
 		private Integer userVisitedId;
 		private Integer userCreatedId;
 		private Integer userBookmarkedId;
 		private int retries;
+		private OrderBy orderBy;
 		
 		/**
 		 * Constructor with must-have fields.
@@ -208,13 +231,15 @@ public class SpotCriteria {
 			criteria.userCreatedId = this.userCreatedId;
 			criteria.userBookmarkedId = this.userBookmarkedId;
 			criteria.retries = Math.abs(this.retries);
-			
-			// Ordering.
-			if(sortBy != null) {
-				criteria.sortBy = sortBy;
-			} else {
-				criteria.sortBy = new SpotDistanceComparator(location);
+			criteria.orderBy = this.orderBy;
+			if(sortingAllowed) {
+				if(sortBy == null) {
+					criteria.sortBy = new SpotDistanceComparator(location);
+				} else {
+					criteria.sortBy = sortBy;
+				}
 			}
+			
 			return criteria;
 		}
 
@@ -283,12 +308,29 @@ public class SpotCriteria {
 		}
 		
 		public SpotCriteria.Builder sortBy(Comparator<SimpleSpot> sortBy) {
+			this.sortingAllowed = true;
 			this.sortBy = sortBy;
+			return this;
+		}
+		
+		public SpotCriteria.Builder doNotSort() {
+			this.sortingAllowed = false;
+			this.sortBy = null;
 			return this;
 		}
 		
 		public SpotCriteria.Builder retries(int retries) {
 			this.retries = retries;
+			return this;
+		}
+		
+		/**
+		 * Cause the Gowalla service to return spots in the order requested.
+		 * You may want to disable SORTING (doNotSort) or you'll end up 
+		 * with something you don't want.
+		 */
+		public SpotCriteria.Builder orderBy(OrderBy orderBy) {
+			this.orderBy = orderBy;
 			return this;
 		}
 	}

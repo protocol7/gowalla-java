@@ -31,6 +31,7 @@ package com.ginsberg.gowalla;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -178,7 +179,7 @@ public class Gowalla {
 			throw new GowallaException("No Critiera provided.");
 		}
 		// Store these in a Set because Gowalla's paging sometimes returns duplicates.
-		Set<SimpleSpot> spotsReturned = new HashSet<SimpleSpot>(); 
+		Set<SimpleSpot> spotsReturned = new LinkedHashSet<SimpleSpot>(); 
 		boolean keepGoing = true;
 		int spotsLastRequest = 0;
 		int attempts = 0;
@@ -208,7 +209,9 @@ public class Gowalla {
 		}
 		List<SimpleSpot> toBeReturned = new LinkedList<SimpleSpot>(spotsReturned);
 		
-		Collections.sort(toBeReturned, criteria.getSortBy());
+		if(criteria.getSortBy() != null) {
+			Collections.sort(toBeReturned, criteria.getSortBy());
+		}
 		if(spotsReturned.size() > criteria.getNumberOfSpots() && criteria.getNumberOfSpots() != 0) {
 			// Do it this way because subList is still backed by the larger list.
 			toBeReturned = new LinkedList<SimpleSpot>(toBeReturned.subList(0, criteria.getNumberOfSpots()));
