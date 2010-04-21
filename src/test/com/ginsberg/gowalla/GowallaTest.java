@@ -43,6 +43,9 @@ import com.ginsberg.gowalla.dto.GeoPoint;
 import com.ginsberg.gowalla.dto.Item;
 import com.ginsberg.gowalla.dto.SimpleSpot;
 import com.ginsberg.gowalla.dto.SpotPhoto;
+import com.ginsberg.gowalla.dto.filter.And;
+import com.ginsberg.gowalla.dto.filter.HasItems;
+import com.ginsberg.gowalla.dto.filter.HasPhotos;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -240,6 +243,20 @@ public class GowallaTest {
 		for(SimpleSpot spot : spotsBackward) {
 			assertTrue(String.format("Spots should be in ascending order by checkins (%d / %d).", spot.getCheckinsCount(), checkins), spot.getCheckinsCount() <= checkins);
 			checkins = spot.getId();
+		}
+	}
+	
+	
+	@Test
+	public void testSpotFindingFiltered() throws Exception {
+		GeoPoint where = new GeoPoint("30.2590405833", "-97.75244235");
+		SpotCriteria.Builder builder = new SpotCriteria.Builder(where, 100).numberOfSpots(200).pagingSupport(PagingSupport.PAGING_ALLOWED);
+		builder.filterBy(new And(new HasPhotos(), new HasItems()));
+		List<SimpleSpot> spots = gowalla.findSpots(builder.build());
+
+		for(SimpleSpot spot : spots) {
+			assertTrue("Spot should have items", spot.getItemsCount() > 0);
+			assertTrue("Spot should have photos", spot.getPhotosCount() > 0);
 		}
 	}
 }

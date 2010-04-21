@@ -31,6 +31,7 @@ package com.ginsberg.gowalla;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -209,9 +210,20 @@ public class Gowalla {
 		}
 		List<SimpleSpot> toBeReturned = new LinkedList<SimpleSpot>(spotsReturned);
 		
+		// Sorting, if supported.
 		if(criteria.getSortBy() != null) {
 			Collections.sort(toBeReturned, criteria.getSortBy());
 		}
+		
+		// Filtering, if supported.
+		if(criteria.getFilter() != null) {
+			for(Iterator<SimpleSpot> i = toBeReturned.iterator(); i.hasNext();) {
+				if(!criteria.getFilter().isIncluded(i.next())) {
+					i.remove();
+				}
+			}
+		}
+		
 		if(spotsReturned.size() > criteria.getNumberOfSpots() && criteria.getNumberOfSpots() != 0) {
 			// Do it this way because subList is still backed by the larger list.
 			toBeReturned = new LinkedList<SimpleSpot>(toBeReturned.subList(0, criteria.getNumberOfSpots()));

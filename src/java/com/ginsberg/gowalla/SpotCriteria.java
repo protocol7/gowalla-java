@@ -34,6 +34,7 @@ import java.util.Comparator;
 import com.ginsberg.gowalla.dto.Locatable;
 import com.ginsberg.gowalla.dto.SimpleSpot;
 import com.ginsberg.gowalla.dto.compare.SpotDistanceComparator;
+import com.ginsberg.gowalla.dto.filter.Filter;
 
 /**
  * Immutable class for creating Spot Finding Criteria, with enclosed builder.
@@ -65,12 +66,13 @@ public class SpotCriteria {
 	private Integer numberOfSpots; 
 	private boolean featured = false; 
 	private Integer parentCategoryId;
-	private Comparator<SimpleSpot> sortBy;
 	private int retries;
 	private Integer userVisitedId;
 	private Integer userCreatedId;
 	private Integer userBookmarkedId;
 	private OrderBy orderBy;
+	private Comparator<SimpleSpot> sortBy;
+	private Filter<SimpleSpot> filter;
 	
 	private String request;
 	
@@ -145,6 +147,10 @@ public class SpotCriteria {
 	public int getRetries() {
 		return retries;
 	}
+	
+	public Filter<SimpleSpot> getFilter() {
+		return filter;
+	}
 
 	public String getRequestWithArguments(int offset) {
 		if(request == null) {
@@ -198,6 +204,7 @@ public class SpotCriteria {
 		private Integer userBookmarkedId;
 		private int retries;
 		private OrderBy orderBy;
+		private Filter<SimpleSpot> filter;
 		
 		/**
 		 * Constructor with must-have fields.
@@ -232,6 +239,7 @@ public class SpotCriteria {
 			criteria.userBookmarkedId = this.userBookmarkedId;
 			criteria.retries = Math.abs(this.retries);
 			criteria.orderBy = this.orderBy;
+			criteria.filter = this.filter;
 			if(sortingAllowed) {
 				if(sortBy == null) {
 					criteria.sortBy = new SpotDistanceComparator(location);
@@ -331,6 +339,11 @@ public class SpotCriteria {
 		 */
 		public SpotCriteria.Builder orderBy(OrderBy orderBy) {
 			this.orderBy = orderBy;
+			return this;
+		}
+		
+		public SpotCriteria.Builder filterBy(Filter<SimpleSpot> filter) {
+			this.filter = filter;
 			return this;
 		}
 	}
