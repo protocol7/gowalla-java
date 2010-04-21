@@ -224,7 +224,7 @@ public class Gowalla {
 			}
 		}
 		
-		if(spotsReturned.size() > criteria.getNumberOfSpots() && criteria.getNumberOfSpots() != 0) {
+		if(toBeReturned.size() > criteria.getNumberOfSpots() && criteria.getNumberOfSpots() != 0) {
 			// Do it this way because subList is still backed by the larger list.
 			toBeReturned = new LinkedList<SimpleSpot>(toBeReturned.subList(0, criteria.getNumberOfSpots()));
 		}
