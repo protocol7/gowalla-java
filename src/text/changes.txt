@@ -7,6 +7,7 @@ o [Enhancement] Three new Spot Builder Criteria
 o [Enhancement] Specify number of retries allowed when 503 errors happen during spot finding (change to SpotCriteria).
 o [Enhancement] Specify a filter to SpotCriteria to pare down the list returned.
 o [BugFix] Added photo count to FullUser and SimpleSpot.
+o [Feature] New method to search spots by keyword near location.
  
 
 
