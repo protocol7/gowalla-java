@@ -253,6 +253,27 @@ public class Gowalla {
 	}
 	
 	/**
+	 * Find spots that match the search phrase near the given location. If no spots exist within the radius given, an empty
+	 * list will be returned.  
+	 * 
+	 * Functional note: Gowalla seems to truncate the results to 40 spots.
+	 * 
+	 * Functional note: Gowalla doesn't return full spot information with this call, so 
+	 * SimpleSpot objects are returned instead, so as not to mislead the caller into
+	 * thinking some data isn't available.
+	 * 
+	 * @param location A string representing a location (Tampa, 33607, Austin, TX, etc).
+	 * @param searchString search string (coffee, bar, monkey).
+	 * @return A List of SimpleSpots.
+	 * @throws GowallaException
+	 */
+	public List<SimpleSpot> searchSpots(final String location, final String searchString) throws GowallaException  {
+		final String response = request(String.format("/spots?l=%s&q=%s",location,searchString));
+		final List<SimpleSpot> spots = responseTranslator.translateSimpleSpots(response);
+		return spots;
+	}
+	
+	/**
 	 * Get a list of all the Categories, nested.
 	 * @throws GowallaException when we cannot connect, parse results, or authenticate.
 	 */
