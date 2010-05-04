@@ -32,9 +32,11 @@ package com.ginsberg.gowalla.request.translate;
 import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.SimpleTimeZone;
 
 import com.ginsberg.gowalla.dto.Address;
 import com.ginsberg.gowalla.dto.Category;
@@ -97,7 +99,9 @@ public class GsonResponseTranslator implements ResponseTranslator {
 				date = date.replaceFirst("\\s", "T");
 				date = date.replaceAll(" ", "");
 				date = date.replaceAll("\\+", "GMT\\+");
-				SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+				SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+				Calendar cal = Calendar.getInstance(new SimpleTimeZone(0, "GMT"));
+		        df.setCalendar(cal);
 				try {
 					return df.parse(date);
 				} catch (ParseException e) {
