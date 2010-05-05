@@ -1,4 +1,4 @@
-Changes from 1.1.0 to 1.X.Y
+Changes from 1.1.0 to 1.1.1
 ---------------------------
 o [Enhancement] Three new Spot Builder Criteria
   - User Created
@@ -8,7 +8,8 @@ o [Enhancement] Specify number of retries allowed when 503 errors happen during 
 o [Enhancement] Specify a filter to SpotCriteria to pare down the list returned.
 o [BugFix] Added photo count to FullUser and SimpleSpot.
 o [Feature] New method to search spots by keyword near location.
- 
+o [BugFix] Date parsing issue brought about by Gowalla API changes.
+o [BugFix] Added paging to items in pack/vault/missing due to Gowalla API changes.
 
 
 Changes from 1.0.0 to 1.1.0
