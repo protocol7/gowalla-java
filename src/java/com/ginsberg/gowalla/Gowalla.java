@@ -359,15 +359,9 @@ public class Gowalla {
 	 * @throws GowallaException
 	 */
 	public List<Item> getItemsForUser(final int id, final ItemContext context) throws GowallaException {
-		try {
-			final String response = request(String.format("/users/%d/items?context=%s", 
+		return getItemsForUser(String.format("/users/%d/items?context=%s", 
 					id,
 					context.name().toLowerCase()));
-			return responseTranslator.translateItems(response);
-		} catch(RequestNotAcceptableException e) {
-			// No User for this number.
-			return null;
-		}
 	}
 	
 	/**
@@ -382,11 +376,28 @@ public class Gowalla {
 	 * @throws GowallaException
 	 */
 	public List<Item> getItemsForUser(final String username, final ItemContext context) throws GowallaException {
+		return getItemsForUser(String.format("/users/%s/items?context=%s", 
+				username,
+				context.name().toLowerCase()));
+	}
+	
+	/**
+	 * Internal call that supports forced paging to get all items, going on the theory
+	 * that not knowing them all isn't entirely useful.  
+	 * 
+	 * TODO: Think about a general purpose paging system here.
+	 */
+	private List<Item> getItemsForUser(final String requestString) throws GowallaException {
+		final List<Item> items = new LinkedList<Item>();
+		int page = 1;
+		int returned = 0;
 		try {
-			final String response = request(String.format("/users/%s/items?context=%s", 
-					username,
-					context.name().toLowerCase()));
-			return responseTranslator.translateItems(response);
+			do {
+				returned = items.size();
+				final String response = request(requestString + "&page=" + page++);
+				items.addAll(responseTranslator.translateItems(response));
+			} while(items.size() != returned);
+			return items;
 		} catch(RequestNotAcceptableException e) {
 			// No User for this number.
 			return null;
